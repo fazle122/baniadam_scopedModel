@@ -709,12 +709,13 @@ class _LeaveApplicationDialogWidgetState
     );
   }
 
-  void _submitForm(Function applyforLeave, String leaveType, String fromDate,
+  void _submitForm(Function applyForLeave, String leaveType, String fromDate,
       String toDate, String reason, String leaveMode, String leaveModeShift) {
-    applyforLeave(
+    applyForLeave(
             leaveType, fromDate, toDate, reason, leaveMode, leaveModeShift)
         .then((bool success) {
       if (success) {
+        Navigator.of(context).pop();
         Navigator.pushReplacementNamed(context, '/empAppliedLeaves');
       } else {
         showDialog(

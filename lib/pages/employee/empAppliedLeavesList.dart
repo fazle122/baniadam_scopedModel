@@ -36,20 +36,21 @@ class _AppliedLeaveLIstPageState extends State<AppliedLeaveLIstPage> {
     );
   }
 
-  Future<Null> _onBackPressed() {
-     Navigator.pushReplacementNamed(context, '/dashboard');
+  Future<bool> _onBackPressed() {
+//    Navigator.pushNamed<String>(context, '/dashboard');
+    Navigator.pushReplacementNamed(context, '/dashboard');
   }
 
   @override
   Widget build(BuildContext context) {
     return
-//      WillPopScope(
-//          onWillPop: _onBackPressed,
-//          child:
+      WillPopScope(
+          onWillPop: _onBackPressed,
+          child:
           Scaffold(
       appBar: AppBar(title: Text('Leave requests'),),
       body: _buildLeaveList(),
-    );
-//      );
+    )
+      );
   }
 }

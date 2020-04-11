@@ -2,6 +2,7 @@
 import 'package:baniadam/models/employeeOperations.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:baniadam/style/app_theme.dart';
+import 'package:baniadam/widgets/employee/leave_cancellation_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +37,12 @@ class AppliedLeaveListWidget extends StatelessWidget {
   }
 }
 
-
+Future<List> _cancelLeave(BuildContext context, id) async {
+  return await showDialog<List>(
+    context: context,
+    builder: (BuildContext context) => LeaveCancellationDialog(id: id,),
+  );
+}
 
 
 
@@ -232,9 +238,8 @@ class AppliedLeaveItemCard extends StatelessWidget {
                                   )),
                             ),
                             onTap: () async {
-//                              print(leaves['id'].toString());
-//                              List data =
-//                              await _cancelLeave(context, leaves['id']);
+                              List data =
+                              await _cancelLeave(context, leavesData.id);
 //                              if (data != null) {
 //                                newLeaveItems = [];
 //                                setState(() {
@@ -260,21 +265,6 @@ class AppliedLeaveItemCard extends StatelessWidget {
             ],
           )),
     );
-
-//    return Container(
-//      padding: EdgeInsets.only(top: 10.0),
-//      child: Row(
-//        mainAxisAlignment: MainAxisAlignment.center,
-//        children: <Widget>[
-//          Text('In time:' + leavesData.fromDate.toString()),
-//          Text('Out time:' + leavesData.toDate.toString()),
-//          SizedBox( width: 8.0,),
-//          Text(leavesData.status),
-////          SizedBox( width: 8.0,),
-////          Text(leavesData.reason)
-//        ],
-//      ),
-//    );
   }
 
 

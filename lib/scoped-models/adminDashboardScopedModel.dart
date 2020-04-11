@@ -3,11 +3,13 @@ import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/helper/AuthHelper.dart';
 import 'package:baniadam/models/EmployeeList.dart';
 import 'package:baniadam/models/adminDashboard.dart';
+import 'package:baniadam/scoped-models/adminUtilityScopedModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 mixin AdminDashboardScopedModel on Model{
+
 
   AdminDashboard _dashboardItem;
   bool _isLoading = false;
@@ -21,17 +23,10 @@ mixin AdminDashboardScopedModel on Model{
   int absentEmpCount;
   int attendanceRequestsCount;
   int currentTrackingEmpCount;
-//  List<LeaveRequest> _leaveRequests=[];
-//  Map<String,dynamic> leaveListFilter = Map();
 
   AdminDashboard get allDashboardData{
     return _dashboardItem;
   }
-
-//  List<LeaveRequest> get allLeaveRequests{
-//    return List.from(_leaveRequests);
-//  }
-
 
   Future<Null> fetchDashboardData() async{
     _isLoading = true;
@@ -65,11 +60,11 @@ mixin AdminDashboardScopedModel on Model{
       leaveRequestsCount = dashboardItem4['data']['total_pending_leave_applications'];
     }
 
-//    if (dashboardItem1 == null) {
-//      _isLoading = false;
-//      notifyListeners();
-//      return;
-//    }
+    if (dashboardItem1 == null || dashboardItem2 == null || dashboardItem3 == null || dashboardItem4 == null) {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
     final AdminDashboard dashboardItemsCount = AdminDashboard(
       currentShiftEmpCount: dashboardItem1['empToAttend'],
       dayOffEmpCount: dashboardItem1['dayOff'],
@@ -88,32 +83,16 @@ mixin AdminDashboardScopedModel on Model{
     return;
   }
 
-//  Future<Null> fetchLeaveRequestsList() async{
-//    _isLoading = true;
-//    notifyListeners();
-//    final List<LeaveRequest> leaveRequestsList = [];
-//    final Map<String, dynamic> data = await ApiService.getLeavesList(leaveListFilter);
-//    if (data == null) {
-//      _isLoading = false;
-//      notifyListeners();
-//      return;
-//    }
-//
-//    for(int i=0; i<data['data'].length;i++){
-//      final LeaveRequest attendanceData  = LeaveRequest(
-//        employeeName: data['data'][i]['employee']['fullName'],
-//        fromDate: data['data'][i]['from'],
-//        toDate: data['data'][i]['to'],
-//        reason: data['data'][i]['reason'],
-//        appliedOn: data['data'][i]['created_at'],
-//
-//      );
-//      leaveRequestsList.add(attendanceData);
-//    }
-//    _leaveRequests = leaveRequestsList;
-//    _isLoading = false;
-//    notifyListeners();
-//    return;
-//  }
+
+  bool get isDashLoading {
+    return _isLoading;
+  }
 }
+
+//mixin UtilityModel on AdminDashboardScopedModel {
+//
+//  bool get isLoading {
+//    return _isLoading;
+//  }
+//}
 

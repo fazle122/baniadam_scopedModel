@@ -5,7 +5,7 @@ import 'package:baniadam/models/adminDashboard.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 
-mixin EmployeesListScopedModel on Model{
+mixin AdminUtilityScopedModel on Model{
 
   bool _isLoading = false;
 
@@ -204,6 +204,8 @@ mixin EmployeesListScopedModel on Model{
 
   Future<Null> fetchLeaveRequestsListForRefresh() async{
     await fetchLeaveRequestsList;
+    notifyListeners();
+    return;
   }
 
   Future<Null> fetchLeaveRequestsList(Map<String,dynamic> filters) async{
@@ -237,6 +239,7 @@ mixin EmployeesListScopedModel on Model{
 
   Future<Null> fetchAttendanceRequestsForAdminForRefresh() async{
     await fetchAttendanceRequestsForAdmin;
+
   }
 
   Future<Null> fetchAttendanceRequestsForAdmin(Map<String,dynamic> filters) async{
@@ -330,5 +333,18 @@ mixin EmployeesListScopedModel on Model{
     }
   }
 
+  bool get isLoading {
+    return _isLoading;
+  }
+
 }
+
+
+//
+//mixin UtilityModel on EmployeesListScopedModel {
+//
+//  bool get isLoading {
+//    return _isLoading;
+//  }
+//}
 

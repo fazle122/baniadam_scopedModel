@@ -30,7 +30,7 @@ class _LeaveRequestsListPageState extends State<LeaveRequestsListPage> {
 
 
   Widget _buildAttendanceList() {
-    return ScopedModelDescendant(
+    return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget content = Center(child: Text('No leave request data'));
         if (model.allLeaveRequests.length > 0 && !model.isLoading) {
@@ -53,7 +53,7 @@ class _LeaveRequestsListPageState extends State<LeaveRequestsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant(
+    return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
           return Scaffold(
             appBar: AppBar(

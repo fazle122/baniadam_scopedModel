@@ -106,5 +106,15 @@ class Utility {
     );
   }
 
+  static Widget logoContainer(Widget child) {
+    return new SizedBox(
+      width: 100.0,
+      height: 50.0,
+      child: new Center(
+        child: child,
+      ),
+    );
+  }
+
 
 }

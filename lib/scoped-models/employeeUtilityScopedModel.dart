@@ -1,12 +1,15 @@
 
 import 'package:baniadam/data_provider/api_service.dart';
+import 'package:baniadam/models/employeeDashboard.dart';
 import 'package:baniadam/models/employeeOperations.dart';
 import 'package:dio/dio.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 mixin EmployeeOperationsScopedModel on Model{
   bool _isLoading = false;
 
+  CompanyInfo _companyInfo;
   EmployeeInfo _empInformation;
   Map<int,dynamic> _reasons = Map();
   Map<int,dynamic> _leaveTypes = Map();
@@ -21,6 +24,10 @@ mixin EmployeeOperationsScopedModel on Model{
   Map<int,dynamic> _designations = Map();
   Map<int,dynamic> _allLeaveTypes = Map();
 
+
+  CompanyInfo get allCompanyInformation{
+    return _companyInfo;
+  }
 
   EmployeeInfo get employeeInformation{
     return _empInformation;
@@ -64,6 +71,28 @@ mixin EmployeeOperationsScopedModel on Model{
 
   Map<int,dynamic> get allLeaveTypes{
     return _allLeaveTypes;
+  }
+
+  Future<Null> fetchCompanyInformation() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var cid = prefs.getString('curr-cid');
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> data =  await ApiService.getLogo(cid);
+    if (data == null) {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    final CompanyInfo companyInfo = CompanyInfo(
+      companyLogoUrl: ApiService.CDN_URl+ "$cid" + data['value'],
+    );
+
+    _companyInfo = companyInfo;
+    _isLoading = false;
+    notifyListeners();
+    return;
   }
 
   Future<bool> createAttendance(FormData attendanceData,FormData selfieData) async{
@@ -346,6 +375,7 @@ mixin EmployeeOperationsScopedModel on Model{
     }
     for (int i = 0; i < data.length; i++) {
       final AppliedLeaves leaveData = AppliedLeaves(
+        id: data[i]['id'],
         leaveType: data[i]['leave_type']['value'],
         status: data[i]['status'],
         fromDate: data[i]['from'],
@@ -409,6 +439,24 @@ mixin EmployeeOperationsScopedModel on Model{
     if (response != null)
       return true;
   }
+
+  Future<bool> applyForLeaveCancel(int id, String cancellationReason) async{
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> successInformation =
+    await ApiService.applyLeaveCancel(id, cancellationReason);
+    if(successInformation != null){
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    }
+    else{
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
 
 }
 

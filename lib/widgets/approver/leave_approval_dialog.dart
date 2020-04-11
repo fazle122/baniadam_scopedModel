@@ -6,11 +6,13 @@ import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
 
 class LeaveApprovalDialog extends StatefulWidget {
+  final MainModel model;
   final int id;
   final String type;
   final Map<String, dynamic> filters;
 
   LeaveApprovalDialog({
+    this.model,
     this.id,
     this.type,
     this.filters,
@@ -46,6 +48,7 @@ class _LeaveApprovalDialogState extends State<LeaveApprovalDialog> {
 
     leaveApprove(id, status, note, declinedReason).then((success){
 //      Navigator.pushReplacementNamed(context, '/leaveRequests');
+      widget.model.fetchLeaveRequestsListForRefresh();
       Navigator.of(context).pop();
     });
 

@@ -24,7 +24,7 @@ class LeaveRequestsListWidget extends StatelessWidget {
       itemCards = ListView.builder(
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) =>
-            LeaveRequestItemCard(data[index],filters),
+            LeaveRequestItemCard(data[index],filters,model),
       );
     }else{
       itemCards = Container();
@@ -49,9 +49,10 @@ class LeaveRequestsListWidget extends StatelessWidget {
 class LeaveRequestItemCard extends StatelessWidget {
   final LeaveRequest requestData;
   final Map<String,dynamic> filters;
+  final MainModel model;
 
 
-  LeaveRequestItemCard(this.requestData,this.filters);
+  LeaveRequestItemCard(this.requestData,this.filters,this.model);
 
   String convert12(String str) {
     String finalTime;
@@ -79,6 +80,7 @@ class LeaveRequestItemCard extends StatelessWidget {
     return await showDialog<List>(
       context: context,
       builder: (BuildContext context) => LeaveApprovalDialog(
+        model: model,
         id: id,
         type: approveType,
         filters: filters,
@@ -258,8 +260,8 @@ class LeaveRequestItemCard extends StatelessWidget {
                                     )),
                               ),
                               onTap: () async {
-                                List data = await _leaveApprovalDialog(
-                                    context, requestData.id, 'DECLINED');
+                                List data = await _leaveApprovalDialog(context, requestData.id, 'DECLINED');
+                                model.fetchLeaveRequestsList(filters);
                                 if (data != null) {
                                 }
                               },
@@ -277,8 +279,9 @@ class LeaveRequestItemCard extends StatelessWidget {
                                     )),
                               ),
                               onTap: () async {
-                                List data = await _leaveApprovalDialog(
-                                    context, requestData.id, 'APPROVED');
+                                List data = await _leaveApprovalDialog(context, requestData.id, 'APPROVED');
+                                model.fetchLeaveRequestsList(filters);
+                                model.fetchDashboardData();
                                 if (data != null) {
                                 }
                               },

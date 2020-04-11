@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:baniadam/scoped-models/main.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class LoginPage extends StatefulWidget {
 
@@ -19,6 +20,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   bool showPass = false;
+  String companyLogo;
+
+  @override
+  void initState() {
+//    widget.model.fetchCompanyInformation();
+    super.initState();
+  }
 
   final Map<String, dynamic> _formData = {
     'email': null,
@@ -276,6 +284,33 @@ class _LoginPageState extends State<LoginPage> {
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
+                        SizedBox(
+                          height: 20.0,
+                        ),
+//                        companyLogo != null
+//                            ? Container(
+//                            height: MediaQuery.of(context).size.height * .9 / 10,
+//                            width: MediaQuery.of(context).size.width * .8 / 5,
+//                            child:  Utility.logoContainer(
+//                              CachedNetworkImage(
+//                                imageUrl:companyLogo,
+//                                placeholder: (context, url) =>
+//                                new CircularProgressIndicator(),
+//                                errorWidget: (context, url, error) =>
+//                                    Utility.logoContainer(
+//                                        Image.asset('assets/icons/BaniAdam-Logo_Final.png')),
+//                                fadeOutDuration: new Duration(seconds: 1),
+//                                fadeInDuration: new Duration(seconds: 3),
+//                              ),
+//                            )
+//
+//                        ): SizedBox(
+//                          child: CircularProgressIndicator(),),
+                        SizedBox(height: 10.0),
+                        Center(
+                            child:
+                            Text('Login', style:  Theme.of(context).textTheme.title)),
+                        SizedBox(height: 100.0),
                         _buildEmailTextField(),
                         SizedBox(
                           height: 10.0,

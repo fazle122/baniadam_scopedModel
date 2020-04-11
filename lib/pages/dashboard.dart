@@ -158,13 +158,196 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Widget _buildDashboard() {
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        Widget content = Center(child: Text('No dashboard item found!'));
+        if (!model.isDashLoading) {
+          content = Container(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: model.userAuthenticationInfo.userCurrentRole == null
+                        ? CircularProgressIndicator()
+                        : model.userAuthenticationInfo.userCurrentRole ==
+                        'Admin'
+                        ? adminDashboard(model.allDashboardData)
+                        : employeeDashboard(model),
+                  ),
+                ],
+              ));
+//          content = Scaffold(
+//            appBar: AppBar(
+//              automaticallyImplyLeading: false,
+//              title: Text('Baniadam'),
+//              actions: <Widget>[
+//                model.userAuthenticationInfo.userRoles.contains('Admin')
+//                    ? _buildCustomSwitch()
+//                    : SizedBox(
+//                  width: 0.0,
+//                  height: 0.0,
+//                ),
+//
+////              IconButton(
+////                icon: Icon(Icons.refresh),
+////                onPressed: () {
+////                  _getDashboardDataForAdmin();
+////                  _getEmployeeData();
+////                },
+////              ),
+//                PopupMenuButton<String>(
+//                  onSelected: (val) async {
+//                    switch (val) {
+//                      case 'MONTHLY_ATTENDANCE_LIST':
+//                        Navigator.pushNamed(context, '/empMonthlyAttendance');
+//                        break;
+//                      case 'ATTENDANCE_REQUEST_LIST':
+//                        Navigator.pushNamed(
+//                            context, '/attendanceRequestList');
+//                        break;
+//                      case 'MANUAL_ATTENDANCE':
+//                        attendanceRequestDialog(context);
+//                        break;
+////                    case 'VIEW_HOLYDAY_LIST':
+////                      Navigator.push(
+////                          context,
+////                          MaterialPageRoute(
+////                              builder: (context) =>
+////                                  MonthlyHolydayListPage(id: id)));
+////                      break;
+//                      case 'APPLIED_LEAVES':
+//                        Navigator.pushNamed(context, '/empAppliedLeaves');
+//                        break;
+//                      case 'LEAVE_REQ_DIALOG':
+//                        leaveApplicationDialog(context);
+//                        break;
+//
+////                    case 'ATTENDANCE_REQUEST_LIST_FOR_ADMIN':
+////                      Navigator.push(
+////                          context,
+////                          MaterialPageRoute(
+////                              builder: (context) =>
+////                                  AttendanceRequestListPageForAdmin()));
+////                      break;
+////                    case 'DAILY_TRACKING':
+////                      Navigator.push(
+////                          context,
+////                          MaterialPageRoute(
+////                              builder: (context) =>
+////                                  TrackableEmployeesForAdmin()));
+////                      break;
+//                      case 'CHANGE_PASS':
+//                        Utility.changePassDialog(context);
+//                        break;
+//                      case 'LOGOUT':
+//                        Utility.logOutDialog(context);
+//                        break;
+//                      case 'UNREGISTER':
+//                        Utility.unRegisterDialog(context);
+//                        break;
+//                    }
+//                  },
+//                  itemBuilder: (BuildContext context) =>
+//                  <PopupMenuItem<String>>[
+//                    model.userAuthenticationInfo.userCurrentRole == 'Employee'
+//                        ? PopupMenuItem<String>(
+//                      value: 'MONTHLY_ATTENDANCE_LIST',
+//                      child: Text('Monthly attendance'),
+//                    )
+//                        : PopupMenuItem(
+//                      height: 0.0,
+//                    ),
+//                    model.userAuthenticationInfo.userCurrentRole == 'Employee'
+//                        ? PopupMenuItem<String>(
+//                      value: 'ATTENDANCE_REQUEST_LIST',
+//                      child: Text('Attendance requests'),
+//                    )
+//                        : PopupMenuItem(
+//                      height: 0.0,
+//                    ),
+//                    model.userAuthenticationInfo.userCurrentRole == 'Employee'
+//                        ? PopupMenuItem<String>(
+//                      value: 'MANUAL_ATTENDANCE',
+//                      child: Text('Request for attendance'),
+//                    )
+//                        : PopupMenuItem(
+//                      height: 0.0,
+//                    ),
+//                    model.userAuthenticationInfo.userCurrentRole == 'Employee'
+//                        ? PopupMenuItem<String>(
+//                      value: 'APPLIED_LEAVES',
+//                      child: Text('Applied leaves'),
+//                    )
+//                        : PopupMenuItem(
+//                      height: 0.0,
+//                    ),
+//                    model.userAuthenticationInfo.userCurrentRole == 'Employee'
+//                        ? PopupMenuItem<String>(
+//                      value: 'LEAVE_REQ_DIALOG',
+//                      child: Text('Apply for leave'),
+//                    )
+//                        : PopupMenuItem(
+//                      height: 0.0,
+//                    ),
+//
+////                  !employeeMenu
+////                      ? PopupMenuItem<String>(
+////                    value: 'ATTENDANCE_REQUEST_LIST_FOR_ADMIN',
+////                    child: Text('Attendance requests'),
+////                  )
+////                      : PopupMenuItem(
+////                    height: 0.0,
+////                  ),
+////                  !employeeMenu
+////                      ? PopupMenuItem<String>(
+////                    value: 'DAILY_TRACKING',
+////                    child: Text('Daily tracking'),
+////                  )
+////                      : PopupMenuItem(
+////                    height: 0.0,
+////                  ),
+//                    PopupMenuItem<String>(
+//                      value: 'CHANGE_PASS',
+//                      child: Text('Change password'),
+//                    ),
+//                    PopupMenuItem<String>(
+//                      value: 'LOGOUT',
+//                      child: Text('Logout'),
+//                    ),
+//                    PopupMenuItem<String>(
+//                      value: 'UNREGISTER',
+//                      child: Text('Unregister'),
+//                    ),
+//                  ],
+//                ),
+//              ],
+//            ),
+//            body: Container(
+//                child: Column(
+//                  children: <Widget>[
+//                    Container(
+//                      child: model.userAuthenticationInfo.userCurrentRole == null
+//                          ? CircularProgressIndicator()
+//                          : model.userAuthenticationInfo.userCurrentRole ==
+//                          'Admin'
+//                          ? adminDashboard(model.allDashboardData)
+//                          : employeeDashboard(model),
+//                    ),
+//                  ],
+//                )),
+//          );
+        } else if (model.isDashLoading) {
+          content = Center(child: CircularProgressIndicator());
+        }
+        return RefreshIndicator(onRefresh: model.fetchCurrentShiftEmployees, child: content,) ;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        if (model.isLoading) {
-          return CircularProgressIndicator();
-        }
         return WillPopScope(
             onWillPop: _onBackPressed,
             child: Scaffold(
@@ -175,9 +358,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   model.userAuthenticationInfo.userRoles.contains('Admin')
                       ? _buildCustomSwitch()
                       : SizedBox(
-                          width: 0.0,
-                          height: 0.0,
-                        ),
+                    width: 0.0,
+                    height: 0.0,
+                  ),
 
 //              IconButton(
 //                icon: Icon(Icons.refresh),
@@ -239,47 +422,47 @@ class _DashboardPageState extends State<DashboardPage> {
                       }
                     },
                     itemBuilder: (BuildContext context) =>
-                        <PopupMenuItem<String>>[
+                    <PopupMenuItem<String>>[
                       model.userAuthenticationInfo.userCurrentRole == 'Employee'
                           ? PopupMenuItem<String>(
-                              value: 'MONTHLY_ATTENDANCE_LIST',
-                              child: Text('Monthly attendance'),
-                            )
+                        value: 'MONTHLY_ATTENDANCE_LIST',
+                        child: Text('Monthly attendance'),
+                      )
                           : PopupMenuItem(
-                              height: 0.0,
-                            ),
+                        height: 0.0,
+                      ),
                       model.userAuthenticationInfo.userCurrentRole == 'Employee'
                           ? PopupMenuItem<String>(
-                              value: 'ATTENDANCE_REQUEST_LIST',
-                              child: Text('Attendance requests'),
-                            )
+                        value: 'ATTENDANCE_REQUEST_LIST',
+                        child: Text('Attendance requests'),
+                      )
                           : PopupMenuItem(
-                              height: 0.0,
-                            ),
+                        height: 0.0,
+                      ),
                       model.userAuthenticationInfo.userCurrentRole == 'Employee'
                           ? PopupMenuItem<String>(
-                              value: 'MANUAL_ATTENDANCE',
-                              child: Text('Request for attendance'),
-                            )
+                        value: 'MANUAL_ATTENDANCE',
+                        child: Text('Request for attendance'),
+                      )
                           : PopupMenuItem(
-                              height: 0.0,
-                            ),
+                        height: 0.0,
+                      ),
                       model.userAuthenticationInfo.userCurrentRole == 'Employee'
                           ? PopupMenuItem<String>(
-                              value: 'APPLIED_LEAVES',
-                              child: Text('Applied leaves'),
-                            )
+                        value: 'APPLIED_LEAVES',
+                        child: Text('Applied leaves'),
+                      )
                           : PopupMenuItem(
-                              height: 0.0,
-                            ),
+                        height: 0.0,
+                      ),
                       model.userAuthenticationInfo.userCurrentRole == 'Employee'
                           ? PopupMenuItem<String>(
-                              value: 'LEAVE_REQ_DIALOG',
-                              child: Text('Apply for leave'),
-                            )
+                        value: 'LEAVE_REQ_DIALOG',
+                        child: Text('Apply for leave'),
+                      )
                           : PopupMenuItem(
-                              height: 0.0,
-                            ),
+                        height: 0.0,
+                      ),
 
 //                  !employeeMenu
 //                      ? PopupMenuItem<String>(
@@ -313,20 +496,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ],
               ),
-              body: Container(
-                  child: Column(
-                children: <Widget>[
-                  Container(
-                    child: model.userAuthenticationInfo.userCurrentRole == null
-                        ? CircularProgressIndicator()
-                        : model.userAuthenticationInfo.userCurrentRole ==
-                                'Admin'
-                            ? adminDashboard(model.allDashboardData)
-                            : employeeDashboard(model),
-                  ),
-                ],
-              )),
-            ));
+              body:  _buildDashboard()
+            )
+        );
+
       },
     );
   }

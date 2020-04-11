@@ -128,7 +128,6 @@ class EmployeeItemCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-//          Image.network(employee.image),
           _buildItemRow(context),
         ],
       ),

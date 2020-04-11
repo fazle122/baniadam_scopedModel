@@ -52,6 +52,7 @@ class MonthlyAttendance {
 
 
 class AppliedLeaves {
+  final int id;
   final String leaveType;
   final String status;
   final String fromDate;
@@ -61,6 +62,7 @@ class AppliedLeaves {
 
 
   AppliedLeaves({
+    @required this.id,
     @required this.leaveType,
     @required this.status,
     @required this.fromDate,
