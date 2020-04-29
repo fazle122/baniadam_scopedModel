@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/helper/AuthHelper.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class LogOutConfirmationDialog extends StatefulWidget {
 }
 
 class _LogOutConfirmationDialogState
-    extends State<LogOutConfirmationDialog> {
+    extends BaseState<LogOutConfirmationDialog> {
 
   int id;
   Location _locationService = new Location();
@@ -37,7 +38,6 @@ class _LogOutConfirmationDialogState
 
   @override
   void initState() {
-//    initPlatformState();
     super.initState();
   }
 

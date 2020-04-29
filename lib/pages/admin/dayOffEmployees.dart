@@ -1,4 +1,5 @@
-import 'package:baniadam/widgets/approver/listWidget.dart';
+import 'package:baniadam/base_state.dart';
+import 'package:baniadam/widgets/approver/common_list_Widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -15,10 +16,11 @@ class DayOffEmployeesListPage extends StatefulWidget {
   }
 }
 
-class _DayOffEmployeesListPageState extends State<DayOffEmployeesListPage> {
+class _DayOffEmployeesListPageState extends BaseState<DayOffEmployeesListPage> {
   @override
   initState() {
     widget.model.fetchDayOffEmployees();
+    widget.model.fetchCompanyId();
     super.initState();
   }
 
@@ -28,7 +30,7 @@ class _DayOffEmployeesListPageState extends State<DayOffEmployeesListPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget content = Center(child: Text('No Employee Found!'));
         if (model.allEmployees.length > 0 && !model.isLoading) {
-          content = ListWidget();
+          content = ListWidget(model,widget.model.companyId.companyID);
         } else if (model.isLoading) {
           content = Center(child: CircularProgressIndicator());
         }

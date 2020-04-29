@@ -1,4 +1,5 @@
-import 'package:baniadam/widgets/approver/listWidget.dart';
+import 'package:baniadam/base_state.dart';
+import 'package:baniadam/widgets/approver/present_list_Widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -15,10 +16,11 @@ class PresentEmployeesListPage extends StatefulWidget {
   }
 }
 
-class _PresentEmployeesListPageState extends State<PresentEmployeesListPage> {
+class _PresentEmployeesListPageState extends BaseState<PresentEmployeesListPage> {
   @override
   initState() {
     widget.model.fetchPresentEmployees();
+    widget.model.fetchCompanyId();
     super.initState();
   }
 
@@ -28,7 +30,7 @@ class _PresentEmployeesListPageState extends State<PresentEmployeesListPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget content = Center(child: Text('No Employee Found!'));
         if (model.allEmployees.length > 0 && !model.isLoading) {
-          content = ListWidget();
+          content = PresentListWidget(widget.model,widget.model.companyId.companyID);
         } else if (model.isLoading) {
           content = Center(child: CircularProgressIndicator());
         }

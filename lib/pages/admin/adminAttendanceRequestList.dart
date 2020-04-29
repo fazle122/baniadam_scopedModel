@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/widgets/approver/admin_attendance_requests_filter_dialog.dart';
 import 'package:baniadam/widgets/approver/attendance_requests_for_admin_list_widget.dart';
 import 'package:baniadam/widgets/employee/attendance_list_Widget.dart';
@@ -19,7 +20,7 @@ class AdminAttendanceRequestListPage extends StatefulWidget {
   }
 }
 
-class _AdminAttendanceRequestListPageState extends State<AdminAttendanceRequestListPage> {
+class _AdminAttendanceRequestListPageState extends BaseState<AdminAttendanceRequestListPage> {
 
   Map<String,dynamic> _filters = Map();
 

@@ -35,4 +35,26 @@ class AdminAttendanceRequestList{
         @required this.date,
         @required this.appliedOn,
       });
+
+}
+
+class AttendanceDetailForAdmin {
+  final int id;
+  final String flag;
+  final String selfieUrl;
+  final String time;
+  final double lat;
+  final double lng;
+  final String deviceType;
+
+
+  AttendanceDetailForAdmin({
+    @required this.id,
+    @required this.flag,
+    @required this.selfieUrl,
+    @required this.time,
+    @required this.lat,
+    @required this.lng,
+    @required this.deviceType,
+  });
 }

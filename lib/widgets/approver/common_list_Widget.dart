@@ -6,13 +6,16 @@ import 'package:baniadam/scoped-models/main.dart';
 
 
 class ListWidget extends StatelessWidget {
+  final MainModel model;
+  final String companyId;
+  ListWidget(this.model,this.companyId);
 
   Widget _buildEmployeeList(List<EmployeeList> employees){
     Widget itemCards;
     if(employees.length >0){
       itemCards = ListView.builder(
           itemBuilder: (BuildContext context, int index) =>
-              EmployeeItemCard(employees[index],index),itemCount: employees.length,
+              EmployeeItemCard(model,companyId,employees[index],index),itemCount: employees.length,
 
       );
     }else{
@@ -32,12 +35,13 @@ class ListWidget extends StatelessWidget {
 }
 
 
-
 class EmployeeItemCard extends StatelessWidget {
+  final MainModel model;
+  final String companyId;
   final EmployeeList employee;
   final int employeeIndex;
 
-  EmployeeItemCard(this.employee, this.employeeIndex);
+  EmployeeItemCard(this.model,this.companyId,this.employee, this.employeeIndex);
 
   Widget _buildItemRow(BuildContext context) {
     return           ListTile(
@@ -47,33 +51,40 @@ class EmployeeItemCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0, style: BorderStyle.solid,color: Colors.grey.shade500),
-                  ),
-                  padding: const EdgeInsets.only(left: 0.0),
-                  height: 60.0,
-                  width: 50.0,
-                  child: ApiService.CDN_URl == null?
-                  Material(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child:Center(
-                          child: Icon(
-                            Icons.person,
-                            size: 40.0,
-                          )))
-                      :
-                  Material(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: employee.image == null ||
-                          employee.image == ""
-                          ? Center(
-                          child: Icon(
-                            Icons.person,
-                            size: 40.0,
-                          ))
-                          : Image.network(employee.image))
+              FadeInImage(
+                image: NetworkImage(ApiService.CDN_URl + "" + companyId+ "/" + employee.image),
+                height: 70.0,
+                width: 50.0,
+                fit: BoxFit.contain,
+                placeholder: AssetImage('assets/dummy-man.png'),
               ),
+//              Container(
+//                  decoration: BoxDecoration(
+//                    border: Border.all(width: 1.0, style: BorderStyle.solid,color: Colors.grey.shade500),
+//                  ),
+//                  padding: const EdgeInsets.only(left: 0.0),
+//                  height: 60.0,
+//                  width: 50.0,
+//                  child: ApiService.CDN_URl == null?
+//                  Material(
+//                      borderRadius: BorderRadius.circular(5.0),
+//                      child:Center(
+//                          child: Icon(
+//                            Icons.person,
+//                            size: 40.0,
+//                          )))
+//                      :
+//                  Material(
+//                      borderRadius: BorderRadius.circular(5.0),
+//                      child: employee.image == null ||
+//                          employee.image == ""
+//                          ? Center(
+//                          child: Icon(
+//                            Icons.person,
+//                            size: 40.0,
+//                          ))
+//                          : Image.network(employee.image))
+//              ),
               SizedBox(
                 width: 10.0,
               ),

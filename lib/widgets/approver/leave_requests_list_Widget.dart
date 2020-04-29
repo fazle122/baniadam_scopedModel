@@ -43,9 +43,6 @@ class LeaveRequestsListWidget extends StatelessWidget {
 }
 
 
-
-
-
 class LeaveRequestItemCard extends StatelessWidget {
   final LeaveRequest requestData;
   final Map<String,dynamic> filters;
@@ -103,7 +100,7 @@ class LeaveRequestItemCard extends StatelessWidget {
                         children: <Widget>[
                           Container(
 //                                    margin: EdgeInsets.only(top: 5.0),
-                            child: Text(requestData.employeeName,
+                            child: Text(requestData.id.toString() + ' ' + requestData.employeeName,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20.0),
@@ -261,9 +258,8 @@ class LeaveRequestItemCard extends StatelessWidget {
                               ),
                               onTap: () async {
                                 List data = await _leaveApprovalDialog(context, requestData.id, 'DECLINED');
-                                model.fetchLeaveRequestsList(filters);
-                                if (data != null) {
-                                }
+                                model.fetchLeaveRequestsListForAdmin(filters);
+                                model.fetchDashboardData();
                               },
                             ),
                             SizedBox(width: 10.0),
@@ -280,10 +276,8 @@ class LeaveRequestItemCard extends StatelessWidget {
                               ),
                               onTap: () async {
                                 List data = await _leaveApprovalDialog(context, requestData.id, 'APPROVED');
-                                model.fetchLeaveRequestsList(filters);
+                                model.fetchLeaveRequestsListForAdmin(filters);
                                 model.fetchDashboardData();
-                                if (data != null) {
-                                }
                               },
                             ),
                           ],

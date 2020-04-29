@@ -22,7 +22,7 @@ class AdminAttendanceRequestListWidget extends StatelessWidget {
     if(data.length >0){
       itemCards = ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            AttendanceRequestItemCard(data[index],index,filters),
+            AttendanceRequestItemCard(model,data[index],index,filters),
         itemCount: data.length,
 
       );
@@ -44,14 +44,13 @@ class AdminAttendanceRequestListWidget extends StatelessWidget {
 
 
 
-
-
 class AttendanceRequestItemCard extends StatelessWidget {
+  final MainModel model;
   final AdminAttendanceRequestList requestData;
   final int index;
   final Map<String,dynamic> filters;
 
-  AttendanceRequestItemCard(this.requestData, this.index,this.filters);
+  AttendanceRequestItemCard(this.model,this.requestData, this.index,this.filters);
 
   String convert12(String s) {
     String finalTime;
@@ -239,12 +238,8 @@ class AttendanceRequestItemCard extends StatelessWidget {
                             onTap: () async {
                               List data = await _approveAttendanceRequest(
                                   context, requestData.id, 'DECLINED');
-//                              if (data != null) {
-//                                newLeaveItems = [];
-//                                setState(() {
-//                                  newLeaveItems.addAll(data);
-//                                });
-//                              }
+                              model.fetchAttendanceRequestsForAdmin(filters);
+                              model.fetchDashboardData();
                             },
                           ),
                           SizedBox(width: 10.0),
@@ -262,12 +257,8 @@ class AttendanceRequestItemCard extends StatelessWidget {
                             onTap: () async {
                               List data = await _approveAttendanceRequest(
                                   context, requestData.id, 'APPROVED');
-//                              if (data != null) {
-//                                newLeaveItems = [];
-//                                setState(() {
-//                                  newLeaveItems.addAll(data);
-//                                });
-//                              }
+                              model.fetchAttendanceRequestsForAdmin(filters);
+                              model.fetchDashboardData();
                             },
                           ),
                         ],

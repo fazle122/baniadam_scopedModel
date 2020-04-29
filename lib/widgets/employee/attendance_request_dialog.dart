@@ -1,10 +1,9 @@
-import 'package:baniadam/data_provider/api_service.dart';
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:toast/toast.dart';
-import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 
 class AttendanceRequestDialogWidget extends StatefulWidget {
@@ -19,7 +18,7 @@ class AttendanceRequestDialogWidget extends StatefulWidget {
 }
 
 class _AttendanceRequestDialogWidgetState
-    extends State<AttendanceRequestDialogWidget> {
+    extends BaseState<AttendanceRequestDialogWidget> {
   bool editable = false;
   bool disableButton = false;
   bool isApplied = false;
@@ -265,29 +264,14 @@ class _AttendanceRequestDialogWidgetState
         'time': _time.hour.toString() +":" + _time.minute.toString(),
       });
     }
-    attendanceRequestData(data,flagType).then((success){
-      Navigator.of(context).pop();
-//      if (successinformation['message'] != null) {
-//        Toast.show(successinformation['message'], context,
-//            duration: Toast.LENGTH_SHORT,
-//            gravity: Toast.CENTER);
-//
-//        Navigator.pushReplacementNamed(context, '/dashboard');
-//      } else {
-//        Navigator.pushReplacementNamed(context, '/dashboard');
-//        Toast.show('Please try again!!!', context,
-//            duration: Toast.LENGTH_LONG,
-//            gravity: Toast.BOTTOM);
-//      }
-//
-//      if (successinformation == null) {
-//        setState(() {
-//          Navigator.pushReplacementNamed(context, '/dashboard');
-//          Toast.show('Please try again!!!', context,
-//              duration: Toast.LENGTH_LONG,
-//              gravity: Toast.BOTTOM);
-//        });
-//      }
+    attendanceRequestData(data,flagType).then((Map<String,dynamic> response){
+      if (response['success']) {
+        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        Navigator.of(context).pop();
+      } else {
+        Navigator.of(context).pop();
+        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER);
+      }
     });
 
   }

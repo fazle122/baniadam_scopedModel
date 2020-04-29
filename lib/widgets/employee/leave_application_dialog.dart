@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class LeaveApplicationDialogWidget extends StatefulWidget {
 }
 
 class _LeaveApplicationDialogWidgetState
-    extends State<LeaveApplicationDialogWidget> {
+    extends BaseState<LeaveApplicationDialogWidget> {
   static const leaveMode = <String>['Full Day', 'Half Day'];
   static const leaveModeShift = <String>['First Half', 'Second Half'];
   TextEditingController reasonController;
@@ -31,7 +32,6 @@ class _LeaveApplicationDialogWidgetState
   String selectedLeaveMode;
   String selectedLeaveModeShift;
   bool modeShift = false;
-  bool isApplied = false;
   bool showBalance = false;
   int leaveCount;
   final format = DateFormat('yyyy-MM-dd');
@@ -44,7 +44,6 @@ class _LeaveApplicationDialogWidgetState
     super.initState();
   }
 
-
   List<DropdownMenuItem> _menuItems(Map<dynamic, dynamic> items) {
     List<DropdownMenuItem> itemWidgets = List();
     items.forEach((key, value) {
@@ -56,8 +55,7 @@ class _LeaveApplicationDialogWidgetState
     return itemWidgets;
   }
 
-
-  Widget _alertDialog(BuildContext context) {
+  Widget _leaveApplicationDialog(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -69,9 +67,11 @@ class _LeaveApplicationDialogWidgetState
           ),
         ),
       ),
-      content: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
+      content:
+//      SingleChildScrollView(
+//        child:
+        Container(
+//          width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
@@ -179,41 +179,41 @@ class _LeaveApplicationDialogWidgetState
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 13.0),
                             )),
-                        ScopedModelDescendant<MainModel>(
-                          builder: (BuildContext context,Widget child,MainModel model){
-                            return Container(
-                              child: DateTimeField(
-                                textAlign: TextAlign.start,
-                                format: format,
-                                onChanged: (dt) {
-                                  setState(() {
-                                    _from = dt;
-                                    _to = dt;
-                                  });
-                                  model.fetchLeaveBalance(_from, _to);
-                                },
-                                decoration: InputDecoration(
-                                    labelText: 'Select date',
-                                    prefixIcon: Icon(
-                                      Icons.date_range,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    contentPadding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0))),
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime(1900),
-                                      initialDate: currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2100));
-                                },
-                              ),
-                            );
-                          }
-                        ),
-
+                        ScopedModelDescendant<MainModel>(builder:
+                            (BuildContext context, Widget child,
+                                MainModel model) {
+                          return Container(
+                            child: DateTimeField(
+                              textAlign: TextAlign.start,
+                              format: format,
+                              onChanged: (dt) {
+                                setState(() {
+                                  _from = dt;
+                                  _to = dt;
+                                });
+                                model.fetchLeaveBalance(_from, _to);
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'Select date',
+                                  prefixIcon: Icon(
+                                    Icons.date_range,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      20.0, 15.0, 20.0, 15.0),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(5.0))),
+                              onShowPicker: (context, currentValue) {
+                                return showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime(1900),
+                                    initialDate: currentValue ?? DateTime.now(),
+                                    lastDate: DateTime(2100));
+                              },
+                            ),
+                          );
+                        }),
                       ],
                     )
                   : SizedBox(
@@ -279,46 +279,46 @@ class _LeaveApplicationDialogWidgetState
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 13.0),
                             )),
-                        ScopedModelDescendant<MainModel>(
-                          builder: (BuildContext context, Widget child,MainModel model){
-                            return Container(
-                              child: DateTimeField(
-                                enabled: _from == null ? false : true,
-                                textAlign: TextAlign.start,
-                                format: format,
-                                onChanged: (dt) {
-                                  setState(() {
-                                    _to = dt;
-                                    print(_to.toString());
-                                  });
-                                  model.fetchLeaveBalance(_from, _to);
-                                },
-                                decoration: InputDecoration(
-                                    labelText: 'To date',
-                                    prefixIcon: Icon(
-                                      Icons.date_range,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    contentPadding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0))),
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                      context: context,
-                                      firstDate: _from,
+                        ScopedModelDescendant<MainModel>(builder:
+                            (BuildContext context, Widget child,
+                                MainModel model) {
+                          return Container(
+                            child: DateTimeField(
+                              enabled: _from == null ? false : true,
+                              textAlign: TextAlign.start,
+                              format: format,
+                              onChanged: (dt) {
+                                setState(() {
+                                  _to = dt;
+                                  print(_to.toString());
+                                });
+                                model.fetchLeaveBalance(_from, _to);
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'To date',
+                                  prefixIcon: Icon(
+                                    Icons.date_range,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      20.0, 15.0, 20.0, 15.0),
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(5.0))),
+                              onShowPicker: (context, currentValue) {
+                                return showDatePicker(
+                                    context: context,
+                                    firstDate: _from,
 //                          initialDate: currentValue ?? DateTime.now(),
-                                      initialDate:
-                                      _from.compareTo(DateTime.now()) < 1
-                                          ? DateTime.now()
-                                          : _from,
-                                      lastDate: DateTime(2100));
-                                },
-                              ),
-                            );
-                          }
-                        ),
-
+                                    initialDate:
+                                        _from.compareTo(DateTime.now()) < 1
+                                            ? DateTime.now()
+                                            : _from,
+                                    lastDate: DateTime(2100));
+                              },
+                            ),
+                          );
+                        }),
                       ],
                     )
                   : SizedBox(
@@ -343,24 +343,23 @@ class _LeaveApplicationDialogWidgetState
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       ),
                     ),
-                    child: ScopedModelDescendant<MainModel>(
-                        builder: (BuildContext context, Widget child, MainModel model){
-                          return DropdownButton(
-                          isExpanded: true,
-                            hint: Text('Select leave type'),
-                            value: selectedLeaveType,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedLeaveType = newValue;
-                                leaveCount = model.leaveTypesForLeaveApply[newValue]['balance'];
-                                showBalance = true;
-                              });
-
-                            },
-                            items: _menuItems(model.leaveTypesForLeaveApply),
-                          );
-                        }
-                    ),
+                    child: ScopedModelDescendant<MainModel>(builder:
+                        (BuildContext context, Widget child, MainModel model) {
+                      return DropdownButton(
+                        isExpanded: true,
+                        hint: Text('Select leave type'),
+                        value: selectedLeaveType,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedLeaveType = newValue;
+                            leaveCount = model.leaveTypesForLeaveApply[newValue]
+                                ['balance'];
+                            showBalance = true;
+                          });
+                        },
+                        items: _menuItems(model.leaveTypesForLeaveApply),
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -415,6 +414,7 @@ class _LeaveApplicationDialogWidgetState
                       )),
                   Container(
                     child: TextField(
+                      autofocus: false,
                       keyboardType: TextInputType.multiline,
                       maxLines: 2,
                       controller: reasonController,
@@ -498,6 +498,7 @@ class _LeaveApplicationDialogWidgetState
                           )),
                         ),
                         onTap: () {
+                          FocusScope.of(context).requestFocus(new FocusNode());
                           if (selectedLeaveMode == null ||
                               selectedLeaveMode == '') {
                             Toast.show('Please select leave mode', context,
@@ -564,36 +565,34 @@ class _LeaveApplicationDialogWidgetState
             ],
           ),
         ),
-      ),
+//      ),
     );
   }
 
   Widget _buildLeaveTypeDropdown() {
     return ScopedModelDescendant<MainModel>(
-      builder: (BuildContext context, Widget child, MainModel model){
-        return DropdownButton(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      return DropdownButton(
 //          isExpanded: true,
-          hint: Text('Select leave type'),
-          value: selectedLeaveType,
-          onChanged: (newValue) {
-            setState(() {
-              selectedLeaveType = newValue;
-              leaveCount = _leaveTypes[newValue]['balance'];
-              showBalance = true;
-            });
-
-          },
-          items: _menuItems(model.leaveTypesForLeaveApply),
-        );
-      }
-    );
-
+        hint: Text('Select leave type'),
+        value: selectedLeaveType,
+        onChanged: (newValue) {
+          setState(() {
+            selectedLeaveType = newValue;
+            leaveCount = _leaveTypes[newValue]['balance'];
+            showBalance = true;
+          });
+        },
+        items: _menuItems(model.leaveTypesForLeaveApply),
+      );
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
-    return _alertDialog(context);
+    return SingleChildScrollView(
+      child:_leaveApplicationDialog(context)
+    );
   }
 
   Widget _confirmLeaveDialog(
@@ -604,42 +603,41 @@ class _LeaveApplicationDialogWidgetState
       String reason,
       String leaveMode,
       String leaveModeShift) {
-    return isApplied
-        ? AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            content: Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
-        : AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            contentPadding: EdgeInsets.all(15.0),
-            title: Center(child: Text('Confirm request')),
-            content: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Text('Do you want to submit this leave application?'),
-                  SizedBox(
-                    height: 30.0,
-                  ),
-//              disableButton ?
-//              Container(
-//                  width: 50.0,
-//                  height: 50.0,
-//                  child:CircularProgressIndicator()):SizedBox(width: 0.0,height: 0.0,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      _buildCancelButton(context),
-                      _buildSubmitButton(context, leaveType, fromDate, toDate,
-                          reason, leaveMode, leaveModeShift),
-                    ],
-                  ),
-                ],
-              ),
-            ));
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      return model.isActivityLoading
+          ? AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              content: SingleChildScrollView(
+                  child: Center(
+                child: CircularProgressIndicator(),
+              )),
+            )
+          : AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              contentPadding: EdgeInsets.all(15.0),
+              title: Center(child: Text('Confirm request')),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Text('Do you want to submit this leave application?'),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _buildCancelButton(context),
+                        _buildSubmitButton(context, leaveType, fromDate, toDate,
+                            reason, leaveMode, leaveModeShift),
+                      ],
+                    ),
+                  ],
+                ),
+              ));
+    });
   }
 
   Widget _buildSubmitButton(
@@ -675,7 +673,7 @@ class _LeaveApplicationDialogWidgetState
         onTap: disableButton
             ? null
             : () async {
-                _submitForm(model.applyforLeave, leaveType, fromDate, toDate,
+                _submitForm(model.applyForLeave, leaveType, fromDate, toDate,
                     reason, leaveMode, leaveModeShift);
               },
       );
@@ -713,25 +711,30 @@ class _LeaveApplicationDialogWidgetState
       String toDate, String reason, String leaveMode, String leaveModeShift) {
     applyForLeave(
             leaveType, fromDate, toDate, reason, leaveMode, leaveModeShift)
-        .then((bool success) {
-      if (success) {
+      .then((Map<String,dynamic> response) {
+        if(response == null){
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Something went wrong'),
+                  content: Text('Please try again!'),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Okay'),
+                    )
+                  ],
+                );
+              });
+        }
+        if (response['success']) {
+          Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
         Navigator.of(context).pop();
         Navigator.pushReplacementNamed(context, '/empAppliedLeaves');
       } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Something went wrong'),
-                content: Text('Please try again!'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Okay'),
-                  )
-                ],
-              );
-            });
+          Navigator.of(context).pop();
+          Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER);
       }
     });
   }

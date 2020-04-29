@@ -80,6 +80,7 @@ mixin EmployeeOperationsScopedModel on Model{
     notifyListeners();
     final Map<String, dynamic> data =  await ApiService.getLogo(cid);
     if (data == null) {
+      _companyInfo = null;
       _isLoading = false;
       notifyListeners();
       return;
@@ -95,24 +96,28 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<bool> createAttendance(FormData attendanceData,FormData selfieData) async{
+  Future<Map<String, dynamic>> createAttendance(FormData attendanceData) async{
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> successInformation = await ApiService.attendanceRequest(attendanceData);
     if(successInformation['id'] != null){
-      ApiService.updateAttendanceRequest(successInformation['id'], selfieData);
+//      ApiService.updateAttendanceRequest(successInformation['id'], selfieData);
       _isLoading = false;
       notifyListeners();
-      return true;
+      return successInformation;
     }
     else{
       _isLoading = false;
       notifyListeners();
-      return false;
+      return null;
     }
   }
 
-  Future<bool> createAttendanceRequest(FormData attendanceRequestData,int flag) async{
+  Future<Null> updateSelfie(int id,FormData selfieData) async{
+      ApiService.updateAttendanceRequest(id, selfieData);
+  }
+
+  Future<Map<String,dynamic>> createAttendanceRequest(FormData attendanceRequestData,int flag) async{
     Map<String, dynamic> successInformation;
     _isLoading = true;
     notifyListeners();
@@ -124,16 +129,18 @@ mixin EmployeeOperationsScopedModel on Model{
     if(successInformation['id'] != null){
       _isLoading = false;
       notifyListeners();
-      return true;
+      return null;
     }
     else{
       _isLoading = false;
       notifyListeners();
-      return false;
+      return successInformation;
     }
   }
 
   Future<Null> fetchEmployeeInformation() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var cid = prefs.getString('curr-cid');
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> empInfo = await ApiService.getEmployeeDetail();
@@ -147,9 +154,10 @@ mixin EmployeeOperationsScopedModel on Model{
       id:empInfo['data']['id'],
       employeeId: empInfo['data']['employeeId'],
       empName: empInfo['data']['fullName'],
-      photoUrl: empInfo['data']['photoAttachment'],
+      empDesignation: empInfo['data']['designation']['value'],
+//      photoUrl: empInfo['data']['photoAttachment'],
+    photoUrl: ApiService.CDN_URl+ "$cid/" + empInfo['data']['photoAttachment']
     );
-
     _empInformation = userData;
     _isLoading = false;
     notifyListeners();
@@ -420,43 +428,59 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<bool> applyforLeave(String leaveType,
-      String fromDate,
-      String toDate,
-      String reason,
-      String leaveMode,
-      String leaveModeShift) async{
+  Future<Map<String,dynamic>> applyForLeave(String leaveType, String fromDate, String toDate, String reason, String leaveMode, String leaveModeShift) async{
     _isLoading = true;
     notifyListeners();
-    final Map<String, dynamic> response =
-    await ApiService.leaveRequest(
-        leaveType,
-        fromDate,
-        toDate,
-        reason,
-        leaveMode,
-        leaveModeShift);
-    if (response != null)
-      return true;
+    final Map<String, dynamic> response = await ApiService.leaveRequest(
+        leaveType, fromDate, toDate, reason, leaveMode, leaveModeShift);
+
+    if (response == null) {
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+    _isLoading = false;
+    notifyListeners();
+    return response;
   }
 
-  Future<bool> applyForLeaveCancel(int id, String cancellationReason) async{
+  Future<Map<String, dynamic>> applyForLeaveCancel(int id, String cancellationReason) async{
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> successInformation =
     await ApiService.applyLeaveCancel(id, cancellationReason);
-    if(successInformation != null){
+    if(successInformation['data'] != null){
       _isLoading = false;
       notifyListeners();
-      return true;
+      return successInformation['data'];
     }
     else{
       _isLoading = false;
       notifyListeners();
-      return false;
+      return null;
     }
   }
 
+  Future<Map<String, dynamic>> updateEmployeeProfilePic(FormData data) async{
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> successInformation = await ApiService.updateEmployeeInfo(data);
+    if(successInformation != null){
+      _isLoading = false;
+      notifyListeners();
+      return successInformation;
+    }
+    else{
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
+
+  bool get isActivityLoading {
+    return _isLoading;
+  }
 
 }
 

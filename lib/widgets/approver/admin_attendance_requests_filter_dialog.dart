@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ class AdminAttendanceRequestFilterDialog extends StatefulWidget {
   }
 }
 
-class _AdminAttendanceRequestFilterDialogState extends State<AdminAttendanceRequestFilterDialog> {
+class _AdminAttendanceRequestFilterDialogState extends BaseState<AdminAttendanceRequestFilterDialog> {
   static const leaveStatus = <String>[
     'Approved',
     'Declined',

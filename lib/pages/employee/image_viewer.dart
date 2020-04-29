@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,19 +19,15 @@ import 'package:flutter/services.dart';
 class PicturePreviewScreen extends StatefulWidget {
   final MainModel model;
 
-//  final CameraDescription camera;
-
-//  final empId;
   const PicturePreviewScreen({
     this.model,
-//      this.camera
   });
 
   @override
   PicturePreviewScreenState createState() => PicturePreviewScreenState();
 }
 
-class PicturePreviewScreenState extends State<PicturePreviewScreen> {
+class PicturePreviewScreenState extends BaseState<PicturePreviewScreen> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
   String _timeString;
@@ -201,7 +198,7 @@ class DisplayPictureScreen extends StatefulWidget {
   _DisplayPictureScreenState createState() => _DisplayPictureScreenState();
 }
 
-class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
+class _DisplayPictureScreenState extends BaseState<DisplayPictureScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String img;
   File file;
@@ -382,7 +379,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                                       gravity: Toast.BOTTOM);
                                 } else {
                                   slowRefresh();
-                                  _submitForm(model.createAttendance);
+                                  _submitForm(model.createAttendance,model.updateSelfie);
                                 }
                               },
                               child: Center(
@@ -482,10 +479,10 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
   }
 
-  void _submitForm(Function createAttendance) {
+  void _submitForm(Function createAttendance,Function updateSelfie) {
     FormData data = FormData();
     FormData selfieData = FormData();
-    selfieData.add('selfie', UploadFileInfo(file, widget.imagePath));
+    selfieData.add('selfie', UploadFileInfo(file, 'test.png'));
 
     if (selectedValue != null) {
       data = new FormData.from({
@@ -501,24 +498,28 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
         'lat': _currentLocation.latitude.toString(),
       });
     }
-    createAttendance(data,selfieData).then((success) {
-      if (success) {
+    createAttendance(data).then((Map<String,dynamic> response) {
+      if (response['success']) {
+          Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+          updateSelfie(response['id'],selfieData);
           Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Something went wrong'),
-                content: Text('Please try again!'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Okay'),
-                  )
-                ],
-              );
-            });
+        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        Navigator.pushReplacementNamed(context, '/dashboard');
+//        showDialog(
+//            context: context,
+//            builder: (BuildContext context) {
+//              return AlertDialog(
+//                title: Text('Something went wrong'),
+//                content: Text('Please try again!'),
+//                actions: <Widget>[
+//                  FlatButton(
+//                    onPressed: () => Navigator.of(context).pop(),
+//                    child: Text('Okay'),
+//                  )
+//                ],
+//              );
+//            });
       }
     });
   }

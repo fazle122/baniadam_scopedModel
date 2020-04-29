@@ -35,20 +35,30 @@ mixin AuthenticateUserScopedModel on Model {
     fetchUserAuthenticationInfo();
   }
 
-  Future<bool> getUserCurrentRole() async{
+//  Future<bool> getUserCurrentRole() async{
+//    _isLoading = true;
+//    notifyListeners();
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    String role = prefs.getString('user-current-role');
+//    if(role == 'Employee') {
+//      _switchUser = true;
+//    }
+//    else{
+//      _switchUser = false;
+//    }
+//    _isLoading = false;
+//    notifyListeners();
+//    return _switchUser;
+//  }
+
+  Future<String> getUserCurrentRole() async{
     _isLoading = true;
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String role = prefs.getString('user-current-role');
-    if(role == 'Employee') {
-      _switchUser = true;
-    }
-    else{
-      _switchUser = false;
-    }
     _isLoading = false;
     notifyListeners();
-    return _switchUser;
+    return role;
   }
 
   Future<bool> setCompanyId(String companyId) async{
@@ -72,7 +82,7 @@ mixin AuthenticateUserScopedModel on Model {
 
   }
 
-  Future<bool> logInUser(String userName, String passWord) async {
+  Future<Map<String, dynamic>> logInUser(String userName, String passWord) async {
     _isLoading = true;
     notifyListeners();
     int trackable;
@@ -82,7 +92,7 @@ mixin AuthenticateUserScopedModel on Model {
         userName, passWord, cid, 'ideaxen123');
 
     if (!loginResponse.containsKey('access_token') && loginResponse['access_token'] == null) {
-      return false;
+      return loginResponse;
     }
 
     if (loginResponse.containsKey('access_token') && loginResponse['access_token'] != null) {
@@ -102,17 +112,19 @@ mixin AuthenticateUserScopedModel on Model {
       prefs.setString('currentUserRole', currentUserRole);
       AuthHelper.setLoginUser(loginResponse['access_token'], loginResponse['user_type'],userRoles,currentUserRole,loginResponse['is_tracking']);
 
-      return true;
+      return loginResponse;
     }
   }
 
-  Future<bool> changePassword(String oldPassword,String newPassword) async{
+  Future<Map<String,dynamic>> changePassword(String oldPassword,String newPassword) async{
     _isLoading = true;
     notifyListeners();
-    final String loginResponse = await ApiService.changePassword(oldPassword, newPassword);
-    if (loginResponse != null && loginResponse != '')
-//    String message = loginResponse.substring(8, loginResponse.length - 2);
-    return true;
+    final Map<String,dynamic> response = await ApiService.changePassword(oldPassword, newPassword);
+    if (response != null) {
+      return response;
+    }else{
+      return null;
+    }
   }
   
   Future<Null> fetchUserAuthenticationInfo() async{
@@ -133,6 +145,10 @@ mixin AuthenticateUserScopedModel on Model {
     notifyListeners();
     return;
     
+  }
+
+  bool get isAuthenticationLoading {
+    return _isLoading;
   }
 
 }

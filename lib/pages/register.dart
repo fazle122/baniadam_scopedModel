@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/helper/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class RegisterPage extends StatefulWidget {
   }
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends BaseState<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool showPass = false;
 

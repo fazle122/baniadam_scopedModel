@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ class EmployeeAttendanceRequestFilterDialog extends StatefulWidget {
   }
 }
 
-class _EmployeeAttendanceRequestFilterDialogState extends State<EmployeeAttendanceRequestFilterDialog> {
+class _EmployeeAttendanceRequestFilterDialogState extends BaseState<EmployeeAttendanceRequestFilterDialog> {
   static const leaveStatus = <String>[
     'Approved',
     'Declined',

@@ -1,15 +1,18 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'package:toast/toast.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class AttendanceRequestApprovalDialog extends StatefulWidget {
+  final MainModel model;
   final int id;
   final String type;
   final Map<String, dynamic> filters;
 
   AttendanceRequestApprovalDialog({
+    this.model,
     this.id,
     this.type,
     this.filters,
@@ -22,7 +25,7 @@ class AttendanceRequestApprovalDialog extends StatefulWidget {
   }
 }
 
-class _AttendanceRequestApprovalDialogState extends State<AttendanceRequestApprovalDialog> {
+class _AttendanceRequestApprovalDialogState extends BaseState<AttendanceRequestApprovalDialog> {
   Map<String, dynamic> data;
   TextEditingController commentController;
   TextEditingController declineReasonController;
@@ -42,21 +45,16 @@ class _AttendanceRequestApprovalDialogState extends State<AttendanceRequestAppro
   }
 
   Future<List> _approveAttendanceRequest(Function approveAttendanceRequest,int id, String status, String note, String declinedReason) async {
-    approveAttendanceRequest(id,status,note,declinedReason).then((success){
-      Navigator.of(context).pop();
+    approveAttendanceRequest(id,status,note,declinedReason).then((Map<String, dynamic> response){
+      if(response['msg'] != null){
+        Toast.show(response['msg'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        Navigator.of(context).pop();
+      }else{
+        Toast.show('Something wrong, please try again.', context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        Navigator.of(context).pop();
+      }
     });
 
-
-//    if (response != null) {
-//      final Map<String, dynamic> leaveData =
-//      await ApiService.getAttendanceRequestListForAdmin(widget.filters);
-//      if (leaveData != null) {
-//        setState(() {
-//          newAttendanceRequestList.addAll(leaveData['data']);
-//        });
-//      }
-//    }
-//    return newAttendanceRequestList;
   }
 
 

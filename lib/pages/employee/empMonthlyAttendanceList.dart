@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/widgets/employee/attendance_list_Widget.dart';
 import 'package:baniadam/widgets/employee/monthly_attendance_list_Widget.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class MonthlyAttendanceLIstPage extends StatefulWidget {
   }
 }
 
-class _MonthlyAttendanceLIstPageState extends State<MonthlyAttendanceLIstPage> {
+class _MonthlyAttendanceLIstPageState extends BaseState<MonthlyAttendanceLIstPage> {
 
   @override
   initState() {

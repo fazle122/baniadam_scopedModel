@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class LeaveRequestFilterDialog extends StatefulWidget {
   }
 }
 
-class _LeaveRequestFilterDialogState extends State<LeaveRequestFilterDialog> {
+class _LeaveRequestFilterDialogState extends BaseState<LeaveRequestFilterDialog> {
   static const leaveStatus = <String>[
     'Approved',
     'Declined',
@@ -36,7 +37,7 @@ class _LeaveRequestFilterDialogState extends State<LeaveRequestFilterDialog> {
   String selectedDepartmentName;
   String selectedDesignationName;
   String selectedLeaveName;
-
+  Map<String,dynamic> _defaultFilters = Map();
 
 
   List _mySelectedStatus;
@@ -71,6 +72,7 @@ class _LeaveRequestFilterDialogState extends State<LeaveRequestFilterDialog> {
     widget.model.fetchDesignations();
     widget.model.fetchAllLeaveTypes();
     _mySelectedStatus = [];
+    _defaultFilters['status'] = ['Pending','Requested for Cancellation'];
     _getStatusList();
     super.initState();
   }
@@ -297,7 +299,7 @@ class _LeaveRequestFilterDialogState extends State<LeaveRequestFilterDialog> {
                             )),
                       ),
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(_defaultFilters);
                       },
                     ),
                     InkWell(

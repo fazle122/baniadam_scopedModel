@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/widgets/employee/attendance_list_Widget.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class CurrentDateAttendanceWidget extends StatefulWidget {
   }
 }
 
-class _CurrentDateAttendanceWidgetState extends State<CurrentDateAttendanceWidget> {
+class _CurrentDateAttendanceWidgetState extends BaseState<CurrentDateAttendanceWidget> {
   @override
   initState() {
     widget.model.fetchCurrentDateAttendanceList();

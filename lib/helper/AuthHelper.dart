@@ -45,13 +45,12 @@ class AuthHelper {
 
   static logOutUser() async {
     prefs = await SharedPreferences.getInstance();
-    if(userToken != null) {
+//    prefs.clear();
       prefs.remove('user-token');
       prefs.remove('user-type');
       prefs.remove('user-roles');
       prefs.remove('user-current-role');
       prefs.remove('isTreckable');
-    }
   }
 
   static unregisterUser() async{

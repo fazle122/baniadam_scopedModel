@@ -1,7 +1,9 @@
 
 import 'package:baniadam/data_provider/api_service.dart';
+import 'package:baniadam/scoped-models/main.dart';
+import 'package:baniadam/widgets/employee/employee_info_dialog.dart';
 import 'package:baniadam/widgets/employee/leave_application_dialog.dart';
-import 'package:baniadam/widgets/helpers/change_password_dialog.dart';
+import 'package:baniadam/widgets/employee/change_password_dialog.dart';
 import 'package:baniadam/widgets/logOut_confirmation_dialog.dart';
 import 'package:baniadam/widgets/unRegister_confirmation_dialog.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,15 @@ class Utility {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => ChangePasswordDialog(),
+    );
+  }
+
+  static Future<String> empInfoDialog(BuildContext context,MainModel model) async {
+    return showDialog<String>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) =>
+          EmployeeInfoDialog(model),
     );
   }
 

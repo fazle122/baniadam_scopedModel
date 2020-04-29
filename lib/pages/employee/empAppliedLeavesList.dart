@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/widgets/employee/applied_leave_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -13,7 +14,7 @@ class AppliedLeaveLIstPage extends StatefulWidget {
   }
 }
 
-class _AppliedLeaveLIstPageState extends State<AppliedLeaveLIstPage> {
+class _AppliedLeaveLIstPageState extends BaseState<AppliedLeaveLIstPage> {
 
   @override
   initState() {
@@ -27,7 +28,7 @@ class _AppliedLeaveLIstPageState extends State<AppliedLeaveLIstPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget content = Center(child: Text('No pending leave request'));
         if (model.leaveRequests.length > 0 && !model.isLoading) {
-          content = AppliedLeaveListWidget();
+          content = AppliedLeaveListWidget(widget.model);
         } else if (model.isLoading) {
           content = Center(child: CircularProgressIndicator());
         }

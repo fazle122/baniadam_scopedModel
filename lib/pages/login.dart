@@ -1,12 +1,14 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/helper/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:baniadam/scoped-models/main.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:toast/toast.dart';
+
+
 
 class LoginPage extends StatefulWidget {
-
   final MainModel model;
 
   LoginPage(this.model);
@@ -17,14 +19,13 @@ class LoginPage extends StatefulWidget {
   }
 }
 
-class _LoginPageState extends State<LoginPage> {
-
+class _LoginPageState extends BaseState<LoginPage> {
   bool showPass = false;
   String companyLogo;
 
   @override
   void initState() {
-//    widget.model.fetchCompanyInformation();
+    widget.model.fetchCompanyInformation();
     super.initState();
   }
 
@@ -36,24 +37,21 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildEmailTextField() {
     return Container(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 4 / 5,
+        width: MediaQuery.of(context).size.width * 4 / 5,
         child: TextFormField(
           decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 30.0, 15.0),
             hintText: 'Username',
             prefixIcon: Icon(Icons.person),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(32.0)),),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+          ),
 //      decoration: InputDecoration(
 //          labelText: 'E-Mail', filled: true, fillColor: Colors.white),
           keyboardType: TextInputType.emailAddress,
           validator: (String value) {
             if (value.isEmpty ||
-                !RegExp(
-                    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                     .hasMatch(value)) {
               return 'Please enter a valid email';
             }
@@ -66,36 +64,28 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildPasswordTextField() {
     return Container(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 4 / 5,
+        width: MediaQuery.of(context).size.width * 4 / 5,
         child: TextFormField(
           decoration: InputDecoration(
-            focusColor: Theme
-                .of(context)
-                .primaryColorDark,
-            labelStyle: TextStyle(color: Theme
-                .of(context)
-                .primaryColorDark),
+            focusColor: Theme.of(context).primaryColorDark,
+            labelStyle: TextStyle(color: Theme.of(context).primaryColorDark),
             hintText: 'Password',
             prefixIcon: Icon(Icons.confirmation_number),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(32.0)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
           ),
 //      decoration: InputDecoration(
 //          labelText: 'Password', filled: true, fillColor: Colors.white),
-          obscureText: true,
+          obscureText: showPass?false:true,
           validator: (String value) {
-            if (value.isEmpty || value.length < 6) {
+            if (value.isEmpty) {
               return 'Password invalid';
             }
           },
           onSaved: (String value) {
             _formData['password'] = value;
           },
-        )
-    );
+        ));
   }
 
   Widget _showPassCheckBox() {
@@ -104,9 +94,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         children: <Widget>[
           Checkbox(
-            activeColor: Theme
-                .of(context)
-                .primaryColorDark,
+            activeColor: Theme.of(context).primaryColorDark,
             value: showPass,
             onChanged: (bool value) {
               setState(() {
@@ -128,26 +116,13 @@ class _LoginPageState extends State<LoginPage> {
     login(
       _formData['email'],
       _formData['password'],
-    ).then((bool success) {
-      if (success) {
+    ).then((Map<String, dynamic> response) {
+      if (response['access_token'] != null) {
         Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
-        Navigator.pushReplacementNamed(context, '/');
+        Toast.show(response['message'], context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
 
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Something went wrong'),
-                content: Text('Please try again!'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Okay'),
-                  )
-                ],
-              );
-            });
       }
     });
   }
@@ -188,18 +163,16 @@ class _LoginPageState extends State<LoginPage> {
                                         style: BorderStyle.solid,
                                         color: Colors.grey.shade500),
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(3.0)),
+                                        BorderRadius.all(Radius.circular(3.0)),
                                   ),
                                 ),
                                 child: Center(
                                     child: Text(
-                                      'No',
-                                      style: TextStyle(
-                                          color:
-                                          Theme
-                                              .of(context)
-                                              .primaryColorDark),
-                                    )),
+                                  'No',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorDark),
+                                )),
                               ),
                               onTap: () {
                                 Navigator.of(context).pop(false);
@@ -210,23 +183,21 @@ class _LoginPageState extends State<LoginPage> {
                                 width: 100.0,
                                 height: 35.0,
                                 decoration: ShapeDecoration(
-                                  color: Theme
-                                      .of(context)
-                                      .buttonColor,
+                                  color: Theme.of(context).buttonColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(3.0)),
+                                        BorderRadius.all(Radius.circular(3.0)),
                                   ),
                                 ),
                                 child: Center(
                                     child: Text(
-                                      'Yes',
-                                      style: TextStyle(color: Colors.white),
-                                    )),
+                                  'Yes',
+                                  style: TextStyle(color: Colors.white),
+                                )),
                               ),
                               onTap: () async {
-                                await SystemChannels.platform.invokeMethod<
-                                    void>('SystemNavigator.pop');
+                                await SystemChannels.platform
+                                    .invokeMethod<void>('SystemNavigator.pop');
                               },
                             ),
                           ],
@@ -236,108 +207,172 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               )
-            // _filterOptions(context),
-          );
+              // _filterOptions(context),
+              );
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text('BaniAdam HR - login'),
-            actions: <Widget>[
-              PopupMenuButton<String>(
-                  onSelected: (val) async {
-                    switch (val) {
-                      case 'UNREGISTER':
-                        debugPrint('UNREGISTER');
-                        Utility.unRegisterDialog(context);
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) =>
-                  <PopupMenuItem<String>>[
-                    PopupMenuItem<String>(
-                      value: 'UNREGISTER',
-                      child: Text('Unregister'),
-                    ),
-                  ]
-              ),
-            ],
-          ),
-          body: Container(
-            padding: EdgeInsets.all(10.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: targetWidth,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 20.0,
-                        ),
-//                        companyLogo != null
-//                            ? Container(
-//                            height: MediaQuery.of(context).size.height * .9 / 10,
-//                            width: MediaQuery.of(context).size.width * .8 / 5,
-//                            child:  Utility.logoContainer(
-//                              CachedNetworkImage(
-//                                imageUrl:companyLogo,
-//                                placeholder: (context, url) =>
-//                                new CircularProgressIndicator(),
-//                                errorWidget: (context, url, error) =>
-//                                    Utility.logoContainer(
-//                                        Image.asset('assets/icons/BaniAdam-Logo_Final.png')),
-//                                fadeOutDuration: new Duration(seconds: 1),
-//                                fadeInDuration: new Duration(seconds: 3),
-//                              ),
-//                            )
-//
-//                        ): SizedBox(
-//                          child: CircularProgressIndicator(),),
-                        SizedBox(height: 10.0),
-                        Center(
-                            child:
-                            Text('Login', style:  Theme.of(context).textTheme.title)),
-                        SizedBox(height: 100.0),
-                        _buildEmailTextField(),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        _buildPasswordTextField(),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        _showPassCheckBox(),
-                      SizedBox(height:20.0),
-                        ScopedModelDescendant<MainModel>(
-                          builder: (BuildContext context, Widget child,
-                              MainModel model) {
-                            return RaisedButton(
-                              textColor: Colors.white,
-                              child: Text('LOGIN'),
-                              onPressed: () => _submitForm(model.logInUser),
-                            );
-                          },
-                        ),
-                      ],
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text('BaniAdam HR - login'),
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                    onSelected: (val) async {
+                      switch (val) {
+                        case 'UNREGISTER':
+                          debugPrint('UNREGISTER');
+                          Utility.unRegisterDialog(context);
+                          break;
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuItem<String>>[
+                          PopupMenuItem<String>(
+                            value: 'UNREGISTER',
+                            child: Text('Unregister'),
+                          ),
+                        ]),
+              ],
+            ),
+            body: _buildLoginBody(context)));
+  }
+
+  Widget _buildLoginBody(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
+
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+          Widget content = Center(child: Text('Register with valid company id'));
+          if (model.allCompanyInformation != null && !model.isActivityLoading)
+          {
+            content = Container(
+              padding: EdgeInsets.all(10.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: targetWidth,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+//                                  SizedBox(
+//                                    height: 20.0,
+//                                  ),
+                          FadeInImage(
+                            image: NetworkImage(widget.model
+                                .allCompanyInformation.companyLogoUrl),
+                            height: 80,
+                            width: 100,
+                            fit: BoxFit.contain,
+                            placeholder: AssetImage('assets/icons/BaniAdam-Logo_Final.png'),
+                          ),
+                          SizedBox(height: 10.0),
+                          Center(
+                              child: Text('Login',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .title)),
+                          SizedBox(height: 50.0),
+                          _buildEmailTextField(),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          _buildPasswordTextField(),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          _showPassCheckBox(),
+                          SizedBox(height: 20.0),
+                          ScopedModelDescendant<MainModel>(
+                            builder: (BuildContext context,
+                                Widget child, MainModel model) {
+                              return RaisedButton(
+                                textColor: Colors.white,
+                                child: Text('LOGIN'),
+                                onPressed: () =>
+                                    _submitForm(model.logInUser),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ));
+            );
+          }
+          else if (model.isActivityLoading) {
+            content = Center(child: CircularProgressIndicator());
+          }
+          return content ;
+
+
+//
+//          return model.isActivityLoading
+//              ? Center(child: CircularProgressIndicator())
+//              : Container(
+//            padding: EdgeInsets.all(10.0),
+//            child: Center(
+//              child: SingleChildScrollView(
+//                child: Container(
+//                  width: targetWidth,
+//                  child: Form(
+//                    key: _formKey,
+//                    child: Column(
+//                      children: <Widget>[
+////                                  SizedBox(
+////                                    height: 20.0,
+////                                  ),
+//                        FadeInImage(
+//                          image: NetworkImage(widget.model
+//                              .allCompanyInformation.companyLogoUrl),
+//                          height: 80,
+//                          width: 100,
+//                          fit: BoxFit.contain,
+//                          placeholder: AssetImage('assets/icons/BaniAdam-Logo_Final.png'),
+//                        ),
+//                        SizedBox(height: 10.0),
+//                        Center(
+//                            child: Text('Login',
+//                                style: Theme.of(context)
+//                                    .textTheme
+//                                    .title)),
+//                        SizedBox(height: 50.0),
+//                        _buildEmailTextField(),
+//                        SizedBox(
+//                          height: 10.0,
+//                        ),
+//                        _buildPasswordTextField(),
+//                        SizedBox(
+//                          height: 10.0,
+//                        ),
+//                        _showPassCheckBox(),
+//                        SizedBox(height: 20.0),
+//                        ScopedModelDescendant<MainModel>(
+//                          builder: (BuildContext context,
+//                              Widget child, MainModel model) {
+//                            return RaisedButton(
+//                              textColor: Colors.white,
+//                              child: Text('LOGIN'),
+//                              onPressed: () =>
+//                                  _submitForm(model.logInUser),
+//                            );
+//                          },
+//                        ),
+//                      ],
+//                    ),
+//                  ),
+//                ),
+//              ),
+//            ),
+//          );
+        });
   }
 }

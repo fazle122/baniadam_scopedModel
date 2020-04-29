@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/widgets/approver/leave_requests_list_Widget.dart';
 import 'package:baniadam/widgets/employee/attendance_list_Widget.dart';
 import 'package:baniadam/widgets/approver/leave_request_filter_dialog.dart';
@@ -18,14 +19,35 @@ class LeaveRequestsListPage extends StatefulWidget {
   }
 }
 
-class _LeaveRequestsListPageState extends State<LeaveRequestsListPage> {
+class _LeaveRequestsListPageState extends BaseState<LeaveRequestsListPage> {
+  ScrollController _scrollController = new ScrollController();
   Map<String, dynamic> filters = Map();
+  int currentPage = 1;
+
 
   @override
   initState() {
     filters['status'] = ['Pending','Requested for Cancellation'];
-    widget.model.fetchLeaveRequestsList(filters);
+    widget.model.fetchLeaveRequestsListForAdmin(filters,currentPage);
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        widget.model.fetchLeaveRequestsListForAdmin(filters,currentPage);
+      }
+    });
     super.initState();
+  }
+
+  void animateScrollBump() {
+    double edge = 50.0;
+    double offsetFromBottom = _scrollController.position.maxScrollExtent -
+        _scrollController.position.pixels;
+    if (offsetFromBottom < edge) {
+      _scrollController.animateTo(
+          _scrollController.offset - (edge - offsetFromBottom),
+          duration: new Duration(milliseconds: 500),
+          curve: Curves.easeOut);
+    }
   }
 
 
@@ -69,9 +91,10 @@ class _LeaveRequestsListPageState extends State<LeaveRequestsListPage> {
                   onSelected: (val) async {
                     switch (val) {
                       case 'FILTER':
-//                        var newFilters = await _leaveFilterDialog(context, model);
-                        filters = await _leaveFilterDialog(context, model);
-//                        if (newFilters != filters) {
+                        var newFilters = await _leaveFilterDialog(context, model);
+//                        filters = await _leaveFilterDialog(context, model);
+                        if (newFilters != filters) {
+                          widget.model.fetchLeaveRequestsListForAdmin(newFilters,currentPage);
 //                          setState(() {
 //                            filters = newFilters;
 //                            title = '';
@@ -119,9 +142,7 @@ class _LeaveRequestsListPageState extends State<LeaveRequestsListPage> {
 ////                          title += 'Status : ' + filters['status'];
 ////                        });
 //                          }
-//                        }
-                        widget.model.fetchLeaveRequestsList(filters);
-//                        widget.model.fetchLeaveRequestsList(newFilters);
+                        }
                         break;
                     }
                   },

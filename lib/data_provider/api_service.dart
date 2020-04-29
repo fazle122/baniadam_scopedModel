@@ -153,7 +153,36 @@ class ApiService {
 //    await AuthHelper.prefs.remove('user-token'); //add guest user
 //  }
 
-  static Future<String> changePassword(String oldPass, String newPass) async {
+//  static Future<String> changePassword(String oldPass, String newPass) async {
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    var token = prefs.getString('user-token');
+//    var cID = prefs.getString('curr-cid');
+//
+//    String qString = BASE_URL + "$cID/api/in/v1/user/pasword/change";
+//
+//    final Map<String, dynamic> authData = {
+//      'old_password': oldPass,
+//      'new_password': newPass,
+//    };
+//
+//    Map<String, String> headers = {
+//      'Authorization': 'Bearer ' + token,
+//      'Content-Type': 'application/json',
+//    };
+//
+//    final http.Response response = await http.patch(
+//      qString,
+//      body: json.encode(authData),
+//    );
+//     final String responseData = response.body;
+//
+//    if (response.statusCode == 200) {
+//      return responseData;
+//    }
+//    return responseData;
+//  }
+
+  static Future<Map<String,dynamic>> changePassword(String oldPass, String newPass) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('user-token');
     var cID = prefs.getString('curr-cid');
@@ -175,7 +204,7 @@ class ApiService {
       body: json.encode(authData),
       headers: headers,
     );
-    final String responseData = response.body;
+    var responseData = json.decode(response.body);
 
     if (response.statusCode == 200) {
       return responseData;
@@ -231,11 +260,6 @@ class ApiService {
     Response response;
     String qString = BASE_URL + "$cID/api/in/v1/accounts/my/attendance/request/firstin";
 
-//    final Response response = await dioService.post(
-//      qString,
-//      data: formData,
-//    );
-
     bool hasError = true;
     String message = 'Something went wrong';
     Map<String, dynamic> attribute = Map();
@@ -249,12 +273,12 @@ class ApiService {
       return {'success': !hasError, 'message': e.response.data['msg']};
     }
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       hasError = false;
       message = response.data['msg'];
     } else {
       hasError = true;
-      message = response.data['msg'];
+//      message = response.data['msg'];
 
     }
     return {'success': !hasError, 'message': message};
@@ -285,20 +309,13 @@ class ApiService {
       return {'success': !hasError, 'message': e.response.data['msg']};
     }
 
-//    final Response response = await dioService.post(
-//      qString,
-//      data: formData,
-//    );
-
-
-
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       hasError = false;
       message = response.data['msg'];
     }
     else {
       hasError = true;
-      message = response.data['msg'];
+//      message = response.data['msg'];
     }
 
     return {'success': !hasError, 'message': message};
@@ -320,7 +337,6 @@ class ApiService {
     };
 
     String qString = BASE_URL + "$cID/api/in/v1/attendances/attendance/$attendanceId/selfie";
-//    https://baniadam.app/{portal}/api/in/v1/attendances/attendance/{ID}/selfie
 
     final Response response = await dioService.post(
       qString,
@@ -1804,13 +1820,10 @@ class ApiService {
     var token = prefs.getString('user-token');
     var cID = prefs.getString('curr-cid');
 
-    String qString = BASE_URL +
-//        "http://$cID" +"api.ideaxen.net/" +
-        "$cID/api/in/v1/leave/approve/$leaveId";
+    String qString = BASE_URL + "$cID/api/in/v1/leave/approve/$leaveId";
     final Map<String, dynamic> authData = {
       'status': status,
       'note': note,
-//      'decline_reason': declineId,
     };
 
     Map<String, String> headers = {
@@ -1946,45 +1959,87 @@ class ApiService {
     return responseData;
   }
 
-  static Future<Map<String, dynamic>> updateEmployeeInfo(
-      FormData formData) async {
-    Response response;
+  static Future<Map<String, dynamic>> updateEmployeeInfo(FormData formData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('user-token');
     var cID = prefs.getString('curr-cid');
+    Response response;
 
     dioService.options.headers = {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json',
     };
 
+    String qString = BASE_URL + "$cID/api/in/v1/accounts/my/photo/update";
+
+    response = await dioService.post(
+      qString,
+      data: formData,
+    ).catchError((onPostError) {
+      return null;
+    });
+
     bool hasError = true;
     String message = 'Something went wrong';
 
-    String qString = BASE_URL + "$cID/api/in/v1/accounts/my/photo/update";
-
-    response = await dioService
-        .post(
-      qString,
-      data: formData,
-    )
-        .catchError((onPostError) {
-//          message = onPostError.response.data['msg'];
-//          return message;
+    if(response = null) {
       return null;
-//          return {'success': !hasError, 'message': message};
-    });
-
-    if (response == null) {
-      return null;
-    } else if (response.statusCode == 200) {
+    }else if (response.statusCode == 200) {
       hasError = false;
-      message = 'profile image updates successfully';
+      message = response.data['msg'];
     } else {
-      message = 'please try again';
+      message = response.data['msg'];
     }
+
     return {'success': !hasError, 'message': message};
+
+//    Map<String,dynamic> responseData = json.decode(response.data);
+//
+//    if (response.statusCode == 200) {
+//      return responseData;
+//    }
+//    return responseData;
   }
+
+//  static Future<Map<String, dynamic>> updateEmployeeInfo_old(
+//      FormData formData) async {
+//    Response response;
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    var token = prefs.getString('user-token');
+//    var cID = prefs.getString('curr-cid');
+//
+//    dioService.options.headers = {
+//      'Authorization': 'Bearer ' + token,
+//      'Content-Type': 'application/json',
+//    };
+//
+//    bool hasError = true;
+//    String message = 'Something went wrong';
+//
+//    String qString = BASE_URL + "$cID/api/in/v1/accounts/my/photo/update";
+//
+//    response = await dioService
+//        .post(
+//      qString,
+//      data: formData,
+//    )
+//        .catchError((onPostError) {
+////          message = onPostError.response.data['msg'];
+////          return message;
+//      return null;
+////          return {'success': !hasError, 'message': message};
+//    });
+//
+//    if (response == null) {
+//      return null;
+//    } else if (response.statusCode == 200) {
+//      hasError = false;
+//      message = 'profile image updates successfully';
+//    } else {
+//      message = 'please try again';
+//    }
+//    return {'success': !hasError, 'message': message};
+//  }
 
   static onPostError(err) {
     return err;

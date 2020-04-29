@@ -17,6 +17,7 @@ class EmployeeInfo {
   final int id;
   final String employeeId;
   final String empName;
+  final String empDesignation;
   final String photoUrl;
 
 
@@ -24,6 +25,7 @@ class EmployeeInfo {
     @required this.id,
     @required this.employeeId,
     @required this.empName,
+    @required this.empDesignation,
     @required this.photoUrl,
   });
 }

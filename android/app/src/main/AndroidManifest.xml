@@ -11,6 +11,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="baniadam"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAVxpSXtNX1uNn21mjI0dj7EINH2drbvsM"/>
+        <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="32b1c47095935c4e2900cc8d681e0bcccdee2304b8e08091a2864e70fe63aeda" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

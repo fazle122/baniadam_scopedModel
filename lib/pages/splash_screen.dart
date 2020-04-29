@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -15,18 +16,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  var token;
-  var cID;
 
-  _getUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('curr-user');
-    cID = prefs.getString('curr-cid');
-  }
 
   @override
   void initState() {
-    _getUserInfo();
     widget.model.fetchUserAuthenticationInfo();
     widget.model.fetchCompanyId();
     _appRoute();

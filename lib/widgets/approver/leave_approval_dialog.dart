@@ -1,9 +1,11 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:scoped_model/scoped_model.dart';
+import 'package:toast/toast.dart';
+
 
 class LeaveApprovalDialog extends StatefulWidget {
   final MainModel model;
@@ -25,7 +27,7 @@ class LeaveApprovalDialog extends StatefulWidget {
   }
 }
 
-class _LeaveApprovalDialogState extends State<LeaveApprovalDialog> {
+class _LeaveApprovalDialogState extends BaseState<LeaveApprovalDialog> {
   Map<String, dynamic> data;
   TextEditingController commentController;
   TextEditingController declineReasonController;
@@ -46,24 +48,19 @@ class _LeaveApprovalDialogState extends State<LeaveApprovalDialog> {
 
   Future<List> _leaveApproval(Function leaveApprove,int id, String status, String note, String declinedReason) async {
 
-    leaveApprove(id, status, note, declinedReason).then((success){
-//      Navigator.pushReplacementNamed(context, '/leaveRequests');
-      widget.model.fetchLeaveRequestsListForRefresh();
+    leaveApprove(id, status, note, declinedReason).then((Map<String,dynamic> response){
+      if(response['data']['status'] == 'APPROVED' || response['data']['status'] == 'DECLINED') {
+        Toast.show('Leave ' + response['data']['status'].toString().toLowerCase() + ' successfully',
+            context, duration: Toast.LENGTH_LONG,
+            gravity:  Toast.BOTTOM);
+//      widget.model.fetchLeaveRequestsListForRefresh();
       Navigator.of(context).pop();
+      }else{
+        Toast.show('Something went wrong, please try again', context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+//        widget.model.fetchLeaveRequestsListForRefresh();
+        Navigator.of(context).pop();
+      }
     });
-
-//    final Map<String, dynamic> loginResponse =
-//    await ApiService.leaveApproval(id, status, note, declinedReason);
-//    if (loginResponse != null) {
-//      final Map<String, dynamic> leaveData =
-//      await ApiService.getLeavesList(widget.filters);
-//      if (leaveData != null) {
-//        setState(() {
-//          newLeaveList.addAll(leaveData['data']);
-//        });
-//      }
-//    }
-//    return newLeaveList;
   }
 
   @override

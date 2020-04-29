@@ -82,10 +82,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/food.jpg
+    - assets/dummy-man.png
     - assets/background.jpg
     - assets/icons/BaniAdam-Logo_Final.png
     - assets/icons/BaniAdam-Logo-(Mobile-App-Icon).png
+    - assets/profile.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -12,12 +12,15 @@ import 'package:intl/intl.dart';
 
 class AppliedLeaveListWidget extends StatelessWidget {
 
+  final MainModel model;
+  AppliedLeaveListWidget(this.model);
+
   Widget _buildLeaveRequestsList(List<AppliedLeaves> data){
     Widget itemCards;
     if(data.length >0){
       itemCards = ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            AppliedLeaveItemCard(data[index],index),
+            AppliedLeaveItemCard(data[index],index,model),
         itemCount: data.length,
 
       );
@@ -37,20 +40,21 @@ class AppliedLeaveListWidget extends StatelessWidget {
   }
 }
 
-Future<List> _cancelLeave(BuildContext context, id) async {
-  return await showDialog<List>(
-    context: context,
-    builder: (BuildContext context) => LeaveCancellationDialog(id: id,),
-  );
-}
-
 
 
 class AppliedLeaveItemCard extends StatelessWidget {
   final AppliedLeaves leavesData;
   final int index;
+  final MainModel model;
 
-  AppliedLeaveItemCard(this.leavesData, this.index);
+  AppliedLeaveItemCard(this.leavesData, this.index,this.model);
+
+  Future<List> _cancelLeave(BuildContext context, id) async {
+    return await showDialog<List>(
+      context: context,
+      builder: (BuildContext context) => LeaveCancellationDialog(id: id,),
+    );
+  }
 
   Widget _buildItemRow(BuildContext context) {
     return Card(
@@ -240,12 +244,7 @@ class AppliedLeaveItemCard extends StatelessWidget {
                             onTap: () async {
                               List data =
                               await _cancelLeave(context, leavesData.id);
-//                              if (data != null) {
-//                                newLeaveItems = [];
-//                                setState(() {
-//                                  newLeaveItems.addAll(data);
-//                                });
-//                              }
+                              model.fetchLeaveRequests();
                             },
                           ),
                           SizedBox(width: 10.0),

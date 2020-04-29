@@ -3,6 +3,7 @@ import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/models/EmployeeList.dart';
 import 'package:baniadam/models/adminDashboard.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 mixin AdminUtilityScopedModel on Model{
@@ -42,7 +43,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -67,7 +68,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -92,7 +93,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -117,7 +118,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -142,7 +143,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -167,7 +168,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -192,7 +193,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image: empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -203,12 +204,12 @@ mixin AdminUtilityScopedModel on Model{
   }
 
   Future<Null> fetchLeaveRequestsListForRefresh() async{
-    await fetchLeaveRequestsList;
+    await fetchLeaveRequestsListForAdmin;
     notifyListeners();
     return;
   }
 
-  Future<Null> fetchLeaveRequestsList(Map<String,dynamic> filters) async{
+  Future<Null> fetchLeaveRequestsListForAdmin(Map<String,dynamic> filters,int currentPage) async{
     _isLoading = true;
     notifyListeners();
     final List<LeaveRequest> leaveRequestsList = [];
@@ -286,7 +287,7 @@ mixin AdminUtilityScopedModel on Model{
       final EmployeeList emp = EmployeeList(
         id: empData['data'][i]['id'].toString(),
         name: empData['data'][i]['fullName'],
-        image: "http://devcdn.baniadam.info/" + empData['data'][i]['photoAttachment'],
+        image:  empData['data'][i]['photoAttachment'],
       );
       fetchedEmployeeList.add(emp);
     }
@@ -296,23 +297,23 @@ mixin AdminUtilityScopedModel on Model{
     return;
   }
 
-  Future<bool> leaveApprove(int id, String status, String note, String declinedReason) async{
+  Future<Map<String, dynamic>> leaveApprove(int id, String status, String note, String declinedReason) async{
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> successInformation = await ApiService.leaveApproval(id, status, note, declinedReason);
     if(successInformation != null){
       _isLoading = false;
       notifyListeners();
-      return true;
+      return successInformation;
     }
     else{
       _isLoading = false;
       notifyListeners();
-      return false;
+      return null;
     }
   }
 
-  Future<bool> approveAttendanceRequest(int id, String status, String note, String declinedReason) async{
+  Future<Map<String, dynamic>> approveAttendanceRequest(int id, String status, String note, String declinedReason) async{
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> response;
@@ -324,13 +325,52 @@ mixin AdminUtilityScopedModel on Model{
     if(response != null){
       _isLoading = false;
       notifyListeners();
-      return true;
+      return response;
     }
     else{
       _isLoading = false;
       notifyListeners();
-      return false;
+      return null;
     }
+  }
+
+  List<AttendanceDetailForAdmin> _attendanceDetailForAdmin = [];
+
+
+  List<AttendanceDetailForAdmin> get allAttendanceDetailForAdmin{
+    return List.from(_attendanceDetailForAdmin);
+  }
+
+  Future<Null> fetchAttendanceDetailListForAdmin(String id,String date) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var cid = prefs.getString('curr-cid');
+
+    _isLoading = true;
+    notifyListeners();
+    final List<AttendanceDetailForAdmin> detailList = [];
+    final Map<String, dynamic> data = await ApiService.getCurrentDateAttendanceDetail(id,date);
+    if (data == null) {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    for(int i=0; i<data['data']['attendance'].length;i++){
+      final AttendanceDetailForAdmin attendanceData  = AttendanceDetailForAdmin(
+        id: data['data']['attendance'][i]['id'],
+        flag: data['data']['attendance'][i]['flag'],
+        selfieUrl: ApiService.CDN_URl + '$cid/' + data['data']['attendance'][i]['selfie'],
+        time: data['data']['attendance'][i]['time'],
+        deviceType: data['data']['attendance'][i]['device_type'],
+        lat: data['data']['attendance'][i]['lat'],
+        lng: data['data']['attendance'][i]['lng'],
+      );
+      detailList.add(attendanceData);
+    }
+    _attendanceDetailForAdmin = detailList;
+    _isLoading = false;
+    notifyListeners();
+    return;
   }
 
   bool get isLoading {

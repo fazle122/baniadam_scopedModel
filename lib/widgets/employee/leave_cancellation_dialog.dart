@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -18,7 +19,7 @@ class LeaveCancellationDialog extends StatefulWidget {
   }
 }
 
-class _LeaveCancellationDialogState extends State<LeaveCancellationDialog> {
+class _LeaveCancellationDialogState extends BaseState<LeaveCancellationDialog> {
   Map<String, dynamic> data;
   TextEditingController reasonController;
   List newLeaveList;
@@ -35,20 +36,20 @@ class _LeaveCancellationDialogState extends State<LeaveCancellationDialog> {
 
   Future<List> _applyLeaveCancel(Function applyForLeaveCancel,int id, String cancellationReason) async {
 
-    applyForLeaveCancel(id, cancellationReason).then((success){
-//      Navigator.pushReplacementNamed(context, '/leaveRequests');
-      Navigator.of(context).pop();
+    applyForLeaveCancel(id, cancellationReason).then((Map<String,dynamic> response){
+      if(response['status'] == 'Cancelled'){
+        Toast.show('Leave' + response['msg'].toString().toLowerCase() + ' successfully' ,
+            context, duration: Toast.LENGTH_LONG,
+            gravity:  Toast.BOTTOM);
+        Navigator.of(context).pop();
+      }
+      else{
+        Toast.show('Something wrong, please try again.',
+            context, duration: Toast.LENGTH_LONG,
+            gravity:  Toast.BOTTOM);
+        Navigator.of(context).pop();
+      }
     });
-
-//    if (loginResponse != null) {
-//      final List<dynamic> leaveData = await ApiService.getPersonalLeavesList();
-//      if (leaveData != null) {
-//        setState(() {
-//          newLeaveList.addAll(leaveData);
-//        });
-//      }
-//    }
-//    return newLeaveList;
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:baniadam/base_state.dart';
 import 'package:baniadam/helper/AuthHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,7 @@ class UnRegisterConfirmationDialog extends StatefulWidget {
   }
 }
 
-class _UnRegisterConfirmationDialogState extends State<UnRegisterConfirmationDialog> {
+class _UnRegisterConfirmationDialogState extends BaseState<UnRegisterConfirmationDialog> {
 
 
   @override
