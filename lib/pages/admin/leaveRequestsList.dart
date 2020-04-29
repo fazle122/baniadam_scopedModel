@@ -28,11 +28,11 @@ class _LeaveRequestsListPageState extends BaseState<LeaveRequestsListPage> {
   @override
   initState() {
     filters['status'] = ['Pending','Requested for Cancellation'];
-    widget.model.fetchLeaveRequestsListForAdmin(filters,currentPage);
+    widget.model.fetchLeaveRequestsListForAdmin(filters: filters,currentPage: currentPage);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        widget.model.fetchLeaveRequestsListForAdmin(filters,currentPage);
+        widget.model.fetchLeaveRequestsListForAdmin(filters:filters,currentPage: currentPage);
       }
     });
     super.initState();
@@ -94,7 +94,7 @@ class _LeaveRequestsListPageState extends BaseState<LeaveRequestsListPage> {
                         var newFilters = await _leaveFilterDialog(context, model);
 //                        filters = await _leaveFilterDialog(context, model);
                         if (newFilters != filters) {
-                          widget.model.fetchLeaveRequestsListForAdmin(newFilters,currentPage);
+                          widget.model.fetchLeaveRequestsListForAdmin(filters:newFilters,currentPage: currentPage);
 //                          setState(() {
 //                            filters = newFilters;
 //                            title = '';

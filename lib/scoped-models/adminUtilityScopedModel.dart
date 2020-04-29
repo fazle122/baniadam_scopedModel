@@ -209,7 +209,7 @@ mixin AdminUtilityScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchLeaveRequestsListForAdmin(Map<String,dynamic> filters,int currentPage) async{
+  Future<Null> fetchLeaveRequestsListForAdmin({Map<String,dynamic> filters,int currentPage}) async{
     _isLoading = true;
     notifyListeners();
     final List<LeaveRequest> leaveRequestsList = [];

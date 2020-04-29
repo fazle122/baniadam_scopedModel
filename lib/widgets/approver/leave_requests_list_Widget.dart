@@ -258,7 +258,7 @@ class LeaveRequestItemCard extends StatelessWidget {
                               ),
                               onTap: () async {
                                 List data = await _leaveApprovalDialog(context, requestData.id, 'DECLINED');
-                                model.fetchLeaveRequestsListForAdmin(filters);
+                                model.fetchLeaveRequestsListForAdmin(filters: filters);
                                 model.fetchDashboardData();
                               },
                             ),
@@ -276,7 +276,7 @@ class LeaveRequestItemCard extends StatelessWidget {
                               ),
                               onTap: () async {
                                 List data = await _leaveApprovalDialog(context, requestData.id, 'APPROVED');
-                                model.fetchLeaveRequestsListForAdmin(filters);
+                                model.fetchLeaveRequestsListForAdmin(filters: filters);
                                 model.fetchDashboardData();
                               },
                             ),
