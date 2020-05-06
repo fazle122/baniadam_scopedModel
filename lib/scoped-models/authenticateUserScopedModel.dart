@@ -3,12 +3,17 @@ import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/helper/AuthHelper.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:baniadam/models/authenticateUser.dart';
-import 'package:toast/toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 
 
 
 mixin AuthenticateUserScopedModel on Model {
+  Location _locationService = new Location();
+  LocationData _currentLocation;
+  String error;
 
   AuthenticateUser _authenticatedUser;
   AuthenticateCompanyId _companyId;
@@ -35,21 +40,6 @@ mixin AuthenticateUserScopedModel on Model {
     fetchUserAuthenticationInfo();
   }
 
-//  Future<bool> getUserCurrentRole() async{
-//    _isLoading = true;
-//    notifyListeners();
-//    SharedPreferences prefs = await SharedPreferences.getInstance();
-//    String role = prefs.getString('user-current-role');
-//    if(role == 'Employee') {
-//      _switchUser = true;
-//    }
-//    else{
-//      _switchUser = false;
-//    }
-//    _isLoading = false;
-//    notifyListeners();
-//    return _switchUser;
-//  }
 
   Future<String> getUserCurrentRole() async{
     _isLoading = true;
@@ -100,7 +90,6 @@ mixin AuthenticateUserScopedModel on Model {
       prefs.setString('curr-cid', 'ideaxen');
 
       userRoles = [];
-//      userRoles.addAll(loginResponse['user_roles']);
       for(int i=0; i<loginResponse['user_roles'].length; i++){
         userRoles.add(loginResponse['user_roles'][i]);
       }
@@ -110,9 +99,46 @@ mixin AuthenticateUserScopedModel on Model {
         currentUserRole= 'Employee';
       }
       prefs.setString('currentUserRole', currentUserRole);
-      AuthHelper.setLoginUser(loginResponse['access_token'], loginResponse['user_type'],userRoles,currentUserRole,loginResponse['is_tracking']);
 
+      if(loginResponse.containsKey('is_tracking') && loginResponse['is_tracking'] != null){
+          trackable = loginResponse['is_tracking'];
+        prefs.setInt('isTrackable',trackable);
+      }
+      AuthHelper.setLoginUser(loginResponse['access_token'], loginResponse['user_type'],userRoles,currentUserRole,loginResponse['is_tracking']);
+      createActivityLog(loginResponse['access_token'],'logIn');
       return loginResponse;
+    }
+  }
+
+  Future<void> logOut() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('user-token');
+    createActivityLog(token, 'logOut');
+    AuthHelper.logOutUser();
+  }
+
+  void createActivityLog(String token,String status) async{
+    var location = new Location();
+    var id;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var cid = prefs.getString('curr-cid');
+    var myInstanceId = prefs.getString('myInstanceId');
+    await _locationService.changeSettings(accuracy: LocationAccuracy.HIGH, interval: 100);
+    try {
+      _currentLocation = await location.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        error = 'Permission denied';
+      }
+      _currentLocation = null;
+    }
+    final Map<String, dynamic> detailData = await ApiService.getEmployeeDetail();
+    if (detailData != null && _currentLocation != null) {
+      id = detailData['data']['id'];
+      await ApiService.createActivityLog(
+        cid,token,'app',myInstanceId,id.toString(),status,
+        _currentLocation.latitude.toString(),_currentLocation.longitude.toString(),DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()).toString(),'',
+      );
     }
   }
 
@@ -150,5 +176,23 @@ mixin AuthenticateUserScopedModel on Model {
   bool get isAuthenticationLoading {
     return _isLoading;
   }
+
+//  initPlatformState() async {
+//    await _locationService.changeSettings(
+//        accuracy: LocationAccuracy.HIGH, interval: 100);
+//
+//    var location = new Location();
+//    try {
+//        _currentLocation = await location.getLocation();
+//
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        error = 'Permission denied';
+//      }
+//      _currentLocation = null;
+//    }
+//  }
+
+
 
 }

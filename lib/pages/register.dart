@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:baniadam/scoped-models/main.dart';
+import 'package:device_info/device_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:random_string/random_string.dart';
+import 'dart:io';
+import 'dart:async';
 
 class RegisterPage extends StatefulWidget {
 
@@ -19,11 +24,60 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends BaseState<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   bool showPass = false;
+  String _deviceId;
+  String myInstanceId;
 
   final Map<String, dynamic> _formData = {
     'companyId': null,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    Map<String, dynamic> deviceData;
+    try {
+      if (Platform.isAndroid) {
+        _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+      } else if (Platform.isIOS) {
+        _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+      }
+    } on PlatformException {
+      deviceData = <String, dynamic>{
+        'Error:': 'Failed to get platform version.'
+      };
+    }
+    if (!mounted) return;
+  }
+
+  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
+    setState(() {
+      _deviceId = build.androidId;
+    });
+  }
+
+  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
+    setState(() {
+      _deviceId = data.model;
+    });
+  }
+
+  generateInstanceId() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    myInstanceId = prefs.getString('myInstanceId');
+    if(myInstanceId == null){
+      setState(() {
+        myInstanceId = _deviceId+ DateTime.now().toString();
+        prefs.setString('myInstanceId', myInstanceId);
+        print('instance Id:' + myInstanceId);
+      });
+    }
+  }
 
 
   Widget _buildCompanyIdField() {
@@ -40,17 +94,14 @@ class _RegisterPageState extends BaseState<RegisterPage> {
             labelStyle: TextStyle(color: Theme
                 .of(context)
                 .primaryColorDark),
-            hintText: 'protal id',
+            hintText: 'company id',
             prefixIcon: Icon(Icons.confirmation_number),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(32.0)),
           ),
-//      decoration: InputDecoration(
-//          labelText: 'Password', filled: true, fillColor: Colors.white),
-          obscureText: true,
           validator: (String value) {
             if (value.isEmpty || value.length < 0) {
-              return 'Password invalid';
+              return 'Please enter valid company ID';
             }
           },
           onSaved: (String value) {
@@ -66,7 +117,7 @@ class _RegisterPageState extends BaseState<RegisterPage> {
     }
     _formKey.currentState.save();
     setCompany(_formData['companyId'],).then((bool success) {
-
+      generateInstanceId();
         Navigator.pushReplacementNamed(context, '/logIn');
     });
   }
@@ -174,7 +225,7 @@ class _RegisterPageState extends BaseState<RegisterPage> {
             automaticallyImplyLeading: false,
             title: Text('BaniAdam HR - register'),
           ),
-          body: Container(
+          body: SingleChildScrollView(
             padding: EdgeInsets.all(10.0),
             child:Form(
               key: _formKey,
@@ -213,33 +264,6 @@ class _RegisterPageState extends BaseState<RegisterPage> {
                   ],
                 )
             )
-
-//            child: Center(
-//              child: SingleChildScrollView(
-//                child: Container(
-//                  width: targetWidth,
-//                  child: Form(
-//                    key: _formKey,
-//                    child: Column(
-//                      children: <Widget>[
-//                        _buildCompanyIdField(),
-//                        SizedBox(height:20.0),
-//                        ScopedModelDescendant<MainModel>(
-//                          builder: (BuildContext context, Widget child,
-//                              MainModel model) {
-//                            return RaisedButton(
-//                              textColor: Colors.white,
-//                              child: Text('Register'),
-//                              onPressed: () => _submitForm(model.setCompanyId),
-//                            );
-//                          },
-//                        ),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//              ),
-//            ),
           ),
         ));
   }

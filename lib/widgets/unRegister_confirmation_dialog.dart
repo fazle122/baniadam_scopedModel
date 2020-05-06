@@ -1,7 +1,8 @@
 import 'package:baniadam/base_state.dart';
 import 'package:baniadam/helper/AuthHelper.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+
 
 
 class UnRegisterConfirmationDialog extends StatefulWidget {
@@ -19,14 +20,11 @@ class UnRegisterConfirmationDialog extends StatefulWidget {
 class _UnRegisterConfirmationDialogState extends BaseState<UnRegisterConfirmationDialog> {
 
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-
   void _unRegister() async {
     AuthHelper.unregisterUser();
+    bg.BackgroundGeolocation.stop().then((bg.State state) {
+      print('[stop] success: $state');
+    });
     Navigator.pushNamed(context, '/register');
   }
 

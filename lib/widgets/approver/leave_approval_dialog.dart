@@ -131,7 +131,6 @@ class _LeaveApprovalDialogState extends BaseState<LeaveApprovalDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       InkWell(
-
                         child: Container(
                           width: 100.0,
                           height: 35.0,
@@ -190,7 +189,8 @@ class _LeaveApprovalDialogState extends BaseState<LeaveApprovalDialog> {
                                     commentController.text.trim(),
                                     selectedDeclineValue.toString());
                               }
-
+                              model.fetchLeaveRequestsListForAdmin(filters: widget.filters);
+                              model.fetchDashboardData();
 
                             },
                           );

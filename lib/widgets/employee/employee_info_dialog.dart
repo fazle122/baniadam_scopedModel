@@ -65,10 +65,11 @@ class _EmployeeInfoDialogState extends BaseState<EmployeeInfoDialog> {
                     borderRadius: BorderRadius.circular(5.0),
                     child: widget.model.employeeInformation.photoUrl != null &&
                             widget.model.employeeInformation.photoUrl != "''"
-                        ? Image.network(ApiService.CDN_URl +
-                            '' +
-                            widget.model.companyId.companyID +
-                            '/' +
+                        ? Image.network(
+//                        ApiService.CDN_URl +
+//                            '' +
+//                            widget.model.companyId.companyID +
+//                            '/' +
                             widget.model.employeeInformation.photoUrl)
                         : Image.asset('assets/profile.png'),
                   )),

@@ -603,6 +603,7 @@ class ApiService {
     if (filters != null) {
       if (filters.containsKey('date') && filters['date'] != 'null') {
         qString += 'date=' + filters['date'];
+//        qString += 'date=' + '2020-05-02';
       }
 
       if (filters.containsKey('branch') && filters['branch'] != 'null') {
@@ -643,7 +644,6 @@ class ApiService {
     var cID = prefs.getString('curr-cid');
 
     String qString = BASE_URL +
-//        "http://$cID" +"api.ideaxen.net/" +
         "$cID/api/in/v1/reports/attendance/daily?per_page=20";
 
     Map<String, String> headers = {
@@ -1163,6 +1163,7 @@ class ApiService {
 
     String qString = BASE_URL +
         "$cID/api/in/v1/employees/tracker/trackingrecords?employee=$empId&date=$date";
+//    "$cID/api/in/v1/employees/tracker/trackingrecords?employee=$empId&date=2020-05-02";
 
     Map<String, String> headers = {
       'Authorization': 'Bearer ' + token,
@@ -1371,13 +1372,14 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> getLeavesList(
-      Map<String, dynamic> filters) async {
+      Map<String, dynamic> filters,int currentPage) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('user-token');
     var cID = prefs.getString('curr-cid');
 
     var responseData;
-    String qString = BASE_URL + "$cID/api/in/v1/leave?";
+//    String qString = BASE_URL + "$cID/api/in/v1/leave?paginate=500";
+    String qString = BASE_URL + "$cID/api/in/v1/leave?paginate=10";
 
     if (filters != null) {
 //      if (filters.containsKey('status') && filters['status'] == 'Pending') {
@@ -1405,6 +1407,9 @@ class ApiService {
         for (int i = 0; i < filters['status'].length; i++) {
           qString += '&status[]=' + filters['status'][i];
         }
+      }
+      if (currentPage != null) {
+          qString += '&page=$currentPage';
       }
     }
 //    else{
@@ -1617,7 +1622,6 @@ class ApiService {
     var cID = prefs.getString('curr-cid');
 
     String qString = BASE_URL +
-//        "http://$cID" + "api.ideaxen.net/" +
         "$cID/api/in/v1/leave/balance";
     Map<String, String> headers = {
       'Authorization': 'Bearer ' + token,
@@ -1732,7 +1736,8 @@ class ApiService {
     }
     return responseData;
   }
-  static Future<List<dynamic>> getCategories1() async {
+
+  static Future<List<dynamic>> getCategories_new() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('user-token');
     var cID = prefs.getString('curr-cid');

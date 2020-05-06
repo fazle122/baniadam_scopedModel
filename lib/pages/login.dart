@@ -312,67 +312,6 @@ class _LoginPageState extends BaseState<LoginPage> {
             content = Center(child: CircularProgressIndicator());
           }
           return content ;
-
-
-//
-//          return model.isActivityLoading
-//              ? Center(child: CircularProgressIndicator())
-//              : Container(
-//            padding: EdgeInsets.all(10.0),
-//            child: Center(
-//              child: SingleChildScrollView(
-//                child: Container(
-//                  width: targetWidth,
-//                  child: Form(
-//                    key: _formKey,
-//                    child: Column(
-//                      children: <Widget>[
-////                                  SizedBox(
-////                                    height: 20.0,
-////                                  ),
-//                        FadeInImage(
-//                          image: NetworkImage(widget.model
-//                              .allCompanyInformation.companyLogoUrl),
-//                          height: 80,
-//                          width: 100,
-//                          fit: BoxFit.contain,
-//                          placeholder: AssetImage('assets/icons/BaniAdam-Logo_Final.png'),
-//                        ),
-//                        SizedBox(height: 10.0),
-//                        Center(
-//                            child: Text('Login',
-//                                style: Theme.of(context)
-//                                    .textTheme
-//                                    .title)),
-//                        SizedBox(height: 50.0),
-//                        _buildEmailTextField(),
-//                        SizedBox(
-//                          height: 10.0,
-//                        ),
-//                        _buildPasswordTextField(),
-//                        SizedBox(
-//                          height: 10.0,
-//                        ),
-//                        _showPassCheckBox(),
-//                        SizedBox(height: 20.0),
-//                        ScopedModelDescendant<MainModel>(
-//                          builder: (BuildContext context,
-//                              Widget child, MainModel model) {
-//                            return RaisedButton(
-//                              textColor: Colors.white,
-//                              child: Text('LOGIN'),
-//                              onPressed: () =>
-//                                  _submitForm(model.logInUser),
-//                            );
-//                          },
-//                        ),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//              ),
-//            ),
-//          );
         });
   }
 }

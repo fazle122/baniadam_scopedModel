@@ -30,8 +30,6 @@ dependencies:
   background_fetch: ^0.4.0
   url_launcher: ^5.2.5
   flutter_background_geolocation: ^1.6.1
-
-
   device_info: ^0.4.1+5
   http: ^0.12.0+2
   grouped_buttons: ^1.0.4
@@ -47,21 +45,15 @@ dependencies:
   connectivity: ^0.4.5+2
   access_settings_menu: ^0.0.1
   flutter_exif_rotation: ^0.2.4
-  #  cached_network_image: ^1.1.1
   cached_network_image: ^2.0.0
   flutter_launcher_icons: ^0.7.3
   file_picker: ^1.4.3+1
   google_map_location_picker: ^2.1.0
   google_maps_flutter: ^0.5.21+8
   multiselect_formfield: ^0.1.2
-  #  lite_rolling_switch: ^0.1.1
   toggle_switch: ^0.1.4
   custom_switch: ^0.0.1
-
-  # Map markers clustering
   fluster: ^1.1.2
-
-  # Cache manager
   flutter_cache_manager: ^1.1.1
   date_format: ^1.0.8
   firebase_messaging: ^6.0.9
@@ -69,12 +61,18 @@ dependencies:
   cloud_firestore: ^0.13.3
   firebase_core: ^0.4.4
   random_string: ^2.0.1
-  #  device_id: ^0.2.0
   flutter_local_notifications: ^0.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
+
+flutter_icons:
+  android: "launcher_icon"
+  iso: true
+  image_path: "assets/icons/BaniAdam-Logo-(Mobile-App-Icon).png"
 
 
 flutter:
@@ -87,6 +85,10 @@ flutter:
     - assets/icons/BaniAdam-Logo_Final.png
     - assets/icons/BaniAdam-Logo-(Mobile-App-Icon).png
     - assets/profile.png
+    - assets/map_location.png
+    - assets/arrow_direction.png
+    - assets/marker_end.png
+    - assets/arrow_up.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -33,7 +33,7 @@ class _LeaveApplicationDialogWidgetState
   String selectedLeaveModeShift;
   bool modeShift = false;
   bool showBalance = false;
-  int leaveCount;
+  double leaveCount;
   final format = DateFormat('yyyy-MM-dd');
 
   @override
@@ -352,8 +352,8 @@ class _LeaveApplicationDialogWidgetState
                         onChanged: (newValue) {
                           setState(() {
                             selectedLeaveType = newValue;
-                            leaveCount = model.leaveTypesForLeaveApply[newValue]
-                                ['balance'];
+                            leaveCount = model.leaveTypesForLeaveApply[newValue]['balance'].toDouble();
+
                             showBalance = true;
                           });
                         },

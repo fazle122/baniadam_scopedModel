@@ -12,6 +12,9 @@ import 'package:baniadam/helper/utility.dart';
 import 'package:baniadam/models/adminDashboard.dart';
 import 'package:baniadam/scoped-models/main.dart';
 import 'package:custom_switch/custom_switch.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+
 
 class DashboardPage extends StatefulWidget {
   final MainModel model;
@@ -30,6 +33,13 @@ class _DashboardPageState extends BaseState<DashboardPage> {
   bool switchUser;
   String profileImageUrl;
 
+  Map<String, dynamic> coordinates;
+  bool _isMoving;
+  bool _enabled;
+  String _motionActivity;
+  String _odometer;
+  String _content;
+
   @override
   initState() {
     widget.model.fetchDashboardData();
@@ -38,6 +48,21 @@ class _DashboardPageState extends BaseState<DashboardPage> {
     widget.model.fetchEmployeeInformation();
     widget.model.fetchCompanyId();
     _switchUser();
+
+    ////
+    //coder for background geolocation
+    ////
+    coordinates = Map();
+    _isMoving = false;
+    _enabled = false;
+    _content = '';
+    _motionActivity = 'UNKNOWN';
+    _odometer = '0';
+    _startTracking();
+    ////
+    //coder for background geolocation
+    ////
+
     super.initState();
   }
 
@@ -53,6 +78,13 @@ class _DashboardPageState extends BaseState<DashboardPage> {
         switchUser = false;
       });
     }
+  }
+
+  _startTracking() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int isTrackable = prefs.getInt('isTrackable');
+    if (isTrackable == 1)
+      _initGeolocationTracking();
   }
 
   Future<bool> _onBackPressed() {
@@ -254,6 +286,20 @@ class _DashboardPageState extends BaseState<DashboardPage> {
                                       : AssetImage('assets/profile.png'),
                                   backgroundColor: Colors.transparent,
                                 )),
+                            onTap: () async {
+                              await Utility.empInfoDialog(context, model);
+                              widget.model.fetchEmployeeInformation();
+                              if (model.employeeInformation.photoUrl != null) {
+                                final Map<String, dynamic> detailData =
+                                await ApiService.getEmployeeDetail();
+                                if (model.employeeInformation != null) {
+                                  setState(() {
+//                                    personalDetail = detailData;
+//                                    photoUrl = detailData['photoAttachment'];
+                                  });
+                                }
+                              }
+                            },
                           ),
                         ),
 
@@ -278,8 +324,8 @@ class _DashboardPageState extends BaseState<DashboardPage> {
 
                   actions: <Widget>[
                     model.userAuthenticationInfo != null
-                        ? model.userAuthenticationInfo.userRoles
-                                .contains('Admin')
+//                        ? model.userAuthenticationInfo.userRoles.contains('Admin')
+                        ? model.userAuthenticationInfo.userRoles != null && model.userAuthenticationInfo.userRoles.contains('Admin')
                             ? _buildCustomSwitch()
                             : SizedBox(
                                 width: 0.0,
@@ -722,19 +768,137 @@ class _DashboardPageState extends BaseState<DashboardPage> {
       ],
     );
   }
+
+  ////
+//code for background geolocation start
+////
+
+
+  Future<Null> _initGeolocationTracking() async {
+    String currentUserToken;
+    String url;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('user-token');
+    var portalID = prefs.getString('curr-cid');
+    setState(() {
+      currentUserToken = token;
+//      currentUserToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImFlYzY5ZmQ1ZGI4Nzk1ZWVlNjczODQ1YzJlY2JkYmFlMjlmN2ZhZDkyM2FjOTQzODBiMTBkNWUzYzBiY2FhMjBmYTE5MDg1YjZmOTEwNzczIn0.eyJhdWQiOiIzIiwianRpIjoiYWVjNjlmZDVkYjg3OTVlZWU2NzM4NDVjMmVjYmRiYWUyOWY3ZmFkOTIzYWM5NDM4MGIxMGQ1ZTNjMGJjYWEyMGZhMTkwODViNmY5MTA3NzMiLCJpYXQiOjE1ODg1ODEzOTAsIm5iZiI6MTU4ODU4MTM5MCwiZXhwIjoxNjIwMTE3MzkwLCJzdWIiOiIzMiIsInNjb3BlcyI6W119.RhaihRHnOXXkh5syQDe4MTl7tXC0ZyBbVBC1cIRoaRP3Hng_MUCTIVhwadzPAKnLi89VSLg6vNYSL2RlEefrIyYk5Bo5BdQTGzAYog63pFDMpXTEtZPoxAgB6MagCiixLvnaj4CQ2yjVT1Ps6uw3WAtBtllsnfhAvaK06cP3yDBCndb4C6ui1wjN8yWQx6q1LQL-EKPlv226Du55z3vdUYwjEPSnaPIROnEcvkZfMHVeftTjErzawNwPUo24EgHKzmDKKSgEL2IVVPJFdtz5ws7ZrZdjtb_FRaklgQ0tGLCSKKtr8zsWChEGq--v2iPueNrV9rHVinAWydfJBJAESwk2MOYRqJkziT6wTD-GvjW3vX-HUXyZvxxzTSpa5UeUklx1fxl2JyOa9a7cpNIl3VxgvPyQuHmz4729XRTy0XuTAWLSqWRrllVqlQe4CBPwTLBRJ-zAPRBfIz6ZMEH-PRfKaAQNZKsVj_ZXlBL84GUJFYkt7UIlcTAATABSEl-jToszumXU9im-qL2D0sAviEw0lK82gHtseAWwX7-d6YfpYxgxq9HIHMxUKYq5F0UJqKHnVqrQsgCm-VkAIJ2vnqMzG7ZFZsVtXeCiuYioG4VE6dTTPWe_2f2AjmS7MreFJvIRnHoQt7w1askegEPjGb9qmMWtHocgIjj13dKUXVE";
+      url = ApiService.BASE_URL +portalID +"/api/in/v1/employees/employee/my/track/save";
+//      url = "https://devapi.baniadam.info/ideaxen/api/in/v1/employees/employee/my/track/save";
+    });
+
+
+    bg.BackgroundGeolocation.onLocation(_onLocation, _onLocationError);
+    bg.BackgroundGeolocation.onMotionChange(_onMotionChange);
+    bg.BackgroundGeolocation.onActivityChange(_onActivityChange);
+    bg.BackgroundGeolocation.onProviderChange(_onProviderChange);
+    bg.BackgroundGeolocation.onConnectivityChange(_onConnectivityChange);
+    bg.BackgroundGeolocation.onHttp(_onHttp);
+    bg.BackgroundGeolocation.onAuthorization(_onAuthorization);
+
+
+    bg.BackgroundGeolocation.ready(bg.Config(
+
+      allowIdenticalLocations: true,
+      enableHeadless: true,
+      deferTime: 15000,
+      startOnBoot: true,
+      stopOnTerminate: false,
+      autoSync: true,
+      autoSyncThreshold: 1,
+      batchSync: true,
+      maxBatchSize: 20,
+      reset: true,
+      debug: true,
+      logLevel: bg.Config.LOG_LEVEL_VERBOSE,
+      desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+      distanceFilter: 50.0,
+      url: url,
+      authorization: bg.Authorization(
+        accessToken: currentUserToken,
+      ),
+      encrypt: false,
+    )).then((bg.State state) {
+      print("[ready] ${state.toMap()}");
+      setState(() {
+        _enabled = state.enabled;
+        _isMoving = state.isMoving;
+      });
+    }).catchError((error) {
+      print('[ready] ERROR: $error');
+    });
+
+    bg.BackgroundGeolocation.start().then((bg.State state) {
+      print('[start] success $state');
+      setState(() {
+        _enabled = state.enabled;
+        _isMoving = state.isMoving;
+      });
+    }).catchError((error) {
+      print('[start] ERROR: $error');
+    });
+  }
+
+  void _onLocation(bg.Location location) {
+    print('[location] - $location');
+
+    String odometerKM = (location.odometer / 1000.0).toStringAsFixed(1);
+
+    setState(() {
+      _content = encoder.convert(location.toMap());
+      coordinates['latitude'] = location.coords.latitude;
+      _odometer = odometerKM;
+    });
+    print('[Test] - $coordinates["coords"]["latitude"]');
+  }
+
+  void _onLocationError(bg.LocationError error) {
+    print('[location] ERROR - $error');
+  }
+
+  void _onMotionChange(bg.Location location) {
+    print('[motionchange] - $location');
+  }
+
+  void _onActivityChange(bg.ActivityChangeEvent event) {
+    print('[activitychange] - $event');
+    setState(() {
+      _motionActivity = event.activity;
+    });
+  }
+
+  void _onHttp(bg.HttpEvent event) async {
+    print('[${bg.Event.HTTP}] - $event');
+  }
+
+  void _onAuthorization(bg.AuthorizationEvent event) async {
+    print('[${bg.Event.AUTHORIZATION}] = $event');
+    if (event.success) {
+      print("- Authorization response: ${event.response}");
+    } else {
+      print("- Authorization error: ${event.error}");
+    }
+
+//    bg.BackgroundGeolocation.setConfig(bg.Config(
+//        url: ENV.TRACKER_HOST + '/api/locations'
+//    ));
+  }
+
+  void _onProviderChange(bg.ProviderChangeEvent event) {
+    print('$event');
+
+    setState(() {
+      _content = encoder.convert(event.toMap());
+    });
+  }
+
+  void _onConnectivityChange(bg.ConnectivityChangeEvent event) {
+    print('$event');
+  }
+
+////
+//code for background geolocation end
+////
 }
 
-//                      onTap: () async {
-//                        await Utility.empInfoDialog(context, model);
-//                        widget.model.fetchEmployeeInformation();
-////                        if (updatedPhoto != null) {
-////                          final Map<String, dynamic> detailData =
-////                              await ApiService.getEmployeeDetail();
-////                          if (detailData != null) {
-////                            setState(() {
-////                              personalDetail = detailData;
-////                              photoUrl = detailData['photoAttachment'];
-////                            });
-////                          }
-////                        }
-//                      },
+

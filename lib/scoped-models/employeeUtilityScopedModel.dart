@@ -1,4 +1,3 @@
-
 import 'package:baniadam/data_provider/api_service.dart';
 import 'package:baniadam/models/employeeDashboard.dart';
 import 'package:baniadam/models/employeeOperations.dart';
@@ -6,79 +5,81 @@ import 'package:dio/dio.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-mixin EmployeeOperationsScopedModel on Model{
-  bool _isLoading = false;
 
+
+
+mixin EmployeeOperationsScopedModel on Model {
+  bool _isLoading = false;
   CompanyInfo _companyInfo;
   EmployeeInfo _empInformation;
-  Map<int,dynamic> _reasons = Map();
-  Map<int,dynamic> _leaveTypes = Map();
-  Map<int,dynamic> _leaveBalance = Map();
+  Map<int, dynamic> _reasons = Map();
+  Map<int, dynamic> _leaveTypes = Map();
+  Map<int, dynamic> _leaveBalance = Map();
   List<MonthlyAttendance> _monthlyAttendance = [];
   List<AppliedLeaves> _leaveRequests = [];
   List<AttendanceRequests> _attendanceRequests = [];
   List<AttendanceDetail> _attendanceDetail = [];
-  Map<String,dynamic> filter = Map();
-  Map<int,dynamic> _branches = Map();
-  Map<int,dynamic> _departments = Map();
-  Map<int,dynamic> _designations = Map();
-  Map<int,dynamic> _allLeaveTypes = Map();
+  Map<String, dynamic> filter = Map();
+  Map<int, dynamic> _branches = Map();
+  Map<int, dynamic> _departments = Map();
+  Map<int, dynamic> _designations = Map();
+  Map<int, dynamic> _allLeaveTypes = Map();
 
 
-  CompanyInfo get allCompanyInformation{
+  CompanyInfo get allCompanyInformation {
     return _companyInfo;
   }
 
-  EmployeeInfo get employeeInformation{
+  EmployeeInfo get employeeInformation {
     return _empInformation;
   }
 
-  Map<int,dynamic> get attendanceRequestReasons{
+  Map<int, dynamic> get attendanceRequestReasons {
     return _reasons;
   }
 
-  Map<int,dynamic> get leaveTypesForLeaveApply{
+  Map<int, dynamic> get leaveTypesForLeaveApply {
     return _leaveTypes;
   }
 
-  List<MonthlyAttendance> get monthlyAttendaceData{
+  List<MonthlyAttendance> get monthlyAttendaceData {
     return List.from(_monthlyAttendance);
   }
 
-  List<AppliedLeaves> get leaveRequests{
+  List<AppliedLeaves> get leaveRequests {
     return List.from(_leaveRequests);
   }
 
-  List<AttendanceRequests> get attendanceRequests{
+  List<AttendanceRequests> get attendanceRequests {
     return List.from(_attendanceRequests);
   }
 
-  List<AttendanceDetail> get attendanceDetailData{
+  List<AttendanceDetail> get attendanceDetailData {
     return List.from(_attendanceDetail);
   }
 
-  Map<int,dynamic> get allBranches{
+  Map<int, dynamic> get allBranches {
     return _branches;
   }
 
-  Map<int,dynamic> get allDepartments{
+  Map<int, dynamic> get allDepartments {
     return _departments;
   }
 
-  Map<int,dynamic> get allDesignations{
+  Map<int, dynamic> get allDesignations {
     return _designations;
   }
 
-  Map<int,dynamic> get allLeaveTypes{
+  Map<int, dynamic> get allLeaveTypes {
     return _allLeaveTypes;
   }
 
-  Future<Null> fetchCompanyInformation() async{
+  Future<Null> fetchCompanyInformation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var cid = prefs.getString('curr-cid');
     _isLoading = true;
     notifyListeners();
-    final Map<String, dynamic> data =  await ApiService.getLogo(cid);
+    final Map<String, dynamic> data = await ApiService.getLogo(cid);
     if (data == null) {
       _companyInfo = null;
       _isLoading = false;
@@ -87,7 +88,7 @@ mixin EmployeeOperationsScopedModel on Model{
     }
 
     final CompanyInfo companyInfo = CompanyInfo(
-      companyLogoUrl: ApiService.CDN_URl+ "$cid" + data['value'],
+      companyLogoUrl: ApiService.CDN_URl + "$cid" + data['value'],
     );
 
     _companyInfo = companyInfo;
@@ -96,49 +97,51 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Map<String, dynamic>> createAttendance(FormData attendanceData) async{
+  Future<Map<String, dynamic>> createAttendance(FormData attendanceData) async {
     _isLoading = true;
     notifyListeners();
-    final Map<String, dynamic> successInformation = await ApiService.attendanceRequest(attendanceData);
-    if(successInformation['id'] != null){
+    final Map<String, dynamic> successInformation =
+        await ApiService.attendanceRequest(attendanceData);
+    if (successInformation['id'] != null) {
 //      ApiService.updateAttendanceRequest(successInformation['id'], selfieData);
       _isLoading = false;
       notifyListeners();
       return successInformation;
-    }
-    else{
+    } else {
       _isLoading = false;
       notifyListeners();
       return null;
     }
   }
 
-  Future<Null> updateSelfie(int id,FormData selfieData) async{
-      ApiService.updateAttendanceRequest(id, selfieData);
+  Future<Null> updateSelfie(int id, FormData selfieData) async {
+    ApiService.updateAttendanceRequest(id, selfieData);
   }
 
-  Future<Map<String,dynamic>> createAttendanceRequest(FormData attendanceRequestData,int flag) async{
+  Future<Map<String, dynamic>> createAttendanceRequest(
+      FormData attendanceRequestData, int flag) async {
     Map<String, dynamic> successInformation;
     _isLoading = true;
     notifyListeners();
-    if(flag == 0){
-      successInformation = await ApiService.manualAttendanceRequestIn(attendanceRequestData);
-    }else{
-      successInformation = await ApiService.manualAttendanceRequestOut(attendanceRequestData);
+    if (flag == 0) {
+      successInformation =
+          await ApiService.manualAttendanceRequestIn(attendanceRequestData);
+    } else {
+      successInformation =
+          await ApiService.manualAttendanceRequestOut(attendanceRequestData);
     }
-    if(successInformation['id'] != null){
+    if (successInformation['id'] != null) {
       _isLoading = false;
       notifyListeners();
       return null;
-    }
-    else{
+    } else {
       _isLoading = false;
       notifyListeners();
       return successInformation;
     }
   }
 
-  Future<Null> fetchEmployeeInformation() async{
+  Future<Null> fetchEmployeeInformation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var cid = prefs.getString('curr-cid');
     _isLoading = true;
@@ -151,43 +154,44 @@ mixin EmployeeOperationsScopedModel on Model{
     }
 
     final EmployeeInfo userData = EmployeeInfo(
-      id:empInfo['data']['id'],
-      employeeId: empInfo['data']['employeeId'],
-      empName: empInfo['data']['fullName'],
-      empDesignation: empInfo['data']['designation']['value'],
+        id: empInfo['data']['id'],
+        employeeId: empInfo['data']['employeeId'],
+        empName: empInfo['data']['fullName'],
+        empDesignation: empInfo['data']['designation']['value'],
 //      photoUrl: empInfo['data']['photoAttachment'],
-    photoUrl: ApiService.CDN_URl+ "$cid/" + empInfo['data']['photoAttachment']
-    );
+        photoUrl:
+            ApiService.CDN_URl + "$cid/" + empInfo['data']['photoAttachment']);
     _empInformation = userData;
     _isLoading = false;
     notifyListeners();
     return;
   }
 
-  Future<Null> fetchAttendanceRequestReasons() async{
+  Future<Null> fetchAttendanceRequestReasons() async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    final List<dynamic> reasonsData = await ApiService.getAttendanceRequestReasons();
+    Map<int, dynamic> data = Map();
+    final List<dynamic> reasonsData =
+        await ApiService.getAttendanceRequestReasons();
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
       return;
     }
-      for (int i = 0; i < reasonsData.length; i++) {
-        data[reasonsData[i]['id']] = reasonsData[i]['value'];
-      }
+    for (int i = 0; i < reasonsData.length; i++) {
+      data[reasonsData[i]['id']] = reasonsData[i]['value'];
+    }
     _reasons = data;
     _isLoading = false;
     notifyListeners();
     return;
   }
 
-  Future<Null> fetchBranches() async{
+  Future<Null> fetchBranches() async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    List<dynamic>  reasonsData = await ApiService.getBranchTypes();
+    Map<int, dynamic> data = Map();
+    List<dynamic> reasonsData = await ApiService.getBranchTypes();
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
@@ -202,11 +206,11 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchDepartments() async{
+  Future<Null> fetchDepartments() async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    List<dynamic>  reasonsData = await ApiService.getDepartments();
+    Map<int, dynamic> data = Map();
+    List<dynamic> reasonsData = await ApiService.getDepartments();
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
@@ -221,11 +225,11 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchDesignations() async{
+  Future<Null> fetchDesignations() async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    List<dynamic>  reasonsData = await ApiService.getDesignations();
+    Map<int, dynamic> data = Map();
+    List<dynamic> reasonsData = await ApiService.getDesignations();
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
@@ -240,11 +244,11 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchAllLeaveTypes() async{
+  Future<Null> fetchAllLeaveTypes() async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    List<dynamic>  reasonsData = await ApiService.getAllLeaveTypes();
+    Map<int, dynamic> data = Map();
+    List<dynamic> reasonsData = await ApiService.getAllLeaveTypes();
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
@@ -259,22 +263,23 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchLeaveBalance(DateTime from, DateTime to) async{
+  Future<Null> fetchLeaveBalance(DateTime from, DateTime to) async {
     _isLoading = true;
     notifyListeners();
-    Map<int,dynamic> data = Map();
-    final Map<String,dynamic> reasonsData = await ApiService.getLeaveBalanceForLeaveApply(from, to);;
+    Map<int, dynamic> data = Map();
+    final Map<String, dynamic> reasonsData =
+        await ApiService.getLeaveBalanceForLeaveApply(from, to);
+    ;
     if (reasonsData == null) {
       _isLoading = false;
       notifyListeners();
       return;
     }
     for (int i = 0; i < reasonsData.length; i++) {
-      Map <String, dynamic> tmp = Map();
+      Map<String, dynamic> tmp = Map();
       tmp['label'] = reasonsData['data'][i]['leave_type']['value'];
       tmp['balance'] = reasonsData['data'][i]['balance'];
       _leaveTypes[reasonsData['data'][i]['leave_type']['id']] = tmp;
-
     }
 //    _leaveTypes = data;
     _isLoading = false;
@@ -282,12 +287,13 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchMonthlyAttendanceList() async{
+  Future<Null> fetchMonthlyAttendanceList() async {
     _isLoading = true;
     notifyListeners();
     await fetchEmployeeInformation();
     final List<MonthlyAttendance> attendanceList = [];
-    final Map<String, dynamic> data = await ApiService.getMonthlyAttendanceData(_empInformation.id,filter);
+    final Map<String, dynamic> data =
+        await ApiService.getMonthlyAttendanceData(_empInformation.id, filter);
     if (data == null) {
       _isLoading = false;
       notifyListeners();
@@ -295,13 +301,13 @@ mixin EmployeeOperationsScopedModel on Model{
     }
     var listItem = data['data']['attendances'][0];
 
-    List<dynamic>  leaveListItem = [];
-    Map<String,dynamic> lType = Map();
+    List<dynamic> leaveListItem = [];
+    Map<String, dynamic> lType = Map();
     Map<String, dynamic> tmp;
     Map<String, dynamic> leaveItem = Map();
     leaveListItem.addAll(listItem['offdays']);
 
-    for(int j = 0; j<leaveListItem.length; j++){
+    for (int j = 0; j < leaveListItem.length; j++) {
       tmp = Map();
       tmp['type'] = leaveListItem[j]['type'];
       tmp['status'] = leaveListItem[j]['status'];
@@ -309,28 +315,35 @@ mixin EmployeeOperationsScopedModel on Model{
     }
 
     for (int i = 0; i < listItem.length; i++) {
-        if(lType.containsKey(listItem['data'][i]['dates']))
-        {
-          leaveItem[listItem['data'][i]['dates']] = lType[leaveListItem[i]['date']];
-        }else{
-          leaveItem[listItem['data'][i]['dates']] = null;
-
-        }
+      if (lType.containsKey(listItem['data'][i]['dates'])) {
+        leaveItem[listItem['data'][i]['dates']] =
+            lType[leaveListItem[i]['date']];
+      } else {
+        leaveItem[listItem['data'][i]['dates']] = null;
+      }
     }
 
-
-
-
-
-    for(int i=0; i<listItem['data'].length;i++){
-      final MonthlyAttendance attendanceData  = MonthlyAttendance(
-        status: listItem['data'][i]['status'] != null ? listItem['data'][i]['status']:null,
-        inTime: listItem['data'][i]['in_time'] != null ? listItem['data'][i]['in_time'] :null,
-        outTime: listItem['data'][i]['out_time'] != null ? listItem['data'][i]['out_time']:null,
-        dates: listItem['data'][i]['dates'] != null ? listItem['data'][i]['dates']:null,
+    for (int i = 0; i < listItem['data'].length; i++) {
+      final MonthlyAttendance attendanceData = MonthlyAttendance(
+        status: listItem['data'][i]['status'] != null
+            ? listItem['data'][i]['status']
+            : null,
+        inTime: listItem['data'][i]['in_time'] != null
+            ? listItem['data'][i]['in_time']
+            : null,
+        outTime: listItem['data'][i]['out_time'] != null
+            ? listItem['data'][i]['out_time']
+            : null,
+        dates: listItem['data'][i]['dates'] != null
+            ? listItem['data'][i]['dates']
+            : null,
 //        offDayDate: test[i]['date'],
-        offDayType: leaveItem[listItem['data'][i]['dates']] != null ? leaveItem[listItem['data'][i]['dates']]['type']:null,
-        offDayStatus: leaveItem[listItem['data'][i]['dates']] != null? leaveItem[listItem['data'][i]['dates']]['status']:null,
+        offDayType: leaveItem[listItem['data'][i]['dates']] != null
+            ? leaveItem[listItem['data'][i]['dates']]['type']
+            : null,
+        offDayStatus: leaveItem[listItem['data'][i]['dates']] != null
+            ? leaveItem[listItem['data'][i]['dates']]['status']
+            : null,
       );
       attendanceList.add(attendanceData);
     }
@@ -340,28 +353,29 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchAttendanceDetailListForRefresh() async{
+  Future<Null> fetchAttendanceDetailListForRefresh() async {
     await fetchAttendanceDetailList;
   }
 
-
-  Future<Null> fetchAttendanceDetailList(String date) async{
+  Future<Null> fetchAttendanceDetailList(String date) async {
     _isLoading = true;
     notifyListeners();
     await fetchEmployeeInformation;
     final List<AttendanceDetail> attendanceDetailList = [];
-    final List<dynamic> data = await ApiService.getDateWisePersonalAttendanceList(_empInformation.id,date);
+    final List<dynamic> data =
+        await ApiService.getDateWisePersonalAttendanceList(
+            _empInformation.id, date);
     if (data == null) {
       _isLoading = false;
       notifyListeners();
       return;
     }
 
-    for(int i=0; i<data.length;i++){
-      final AttendanceDetail attendanceData  = AttendanceDetail(
-        date: data[i]['date'] ,
-        flag: data[i]['flag'] ,
-        time: data[i]['time'] ,
+    for (int i = 0; i < data.length; i++) {
+      final AttendanceDetail attendanceData = AttendanceDetail(
+        date: data[i]['date'],
+        flag: data[i]['flag'],
+        time: data[i]['time'],
       );
       attendanceDetailList.add(attendanceData);
     }
@@ -371,7 +385,7 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchLeaveRequests() async{
+  Future<Null> fetchLeaveRequests() async {
     _isLoading = true;
     notifyListeners();
     final List<AppliedLeaves> leaveList = [];
@@ -383,14 +397,13 @@ mixin EmployeeOperationsScopedModel on Model{
     }
     for (int i = 0; i < data.length; i++) {
       final AppliedLeaves leaveData = AppliedLeaves(
-        id: data[i]['id'],
-        leaveType: data[i]['leave_type']['value'],
-        status: data[i]['status'],
-        fromDate: data[i]['from'],
-        toDate: data[i]['to'],
-        reason: data[i]['reason'],
-        appliedOn: data[i]['created_at']
-      );
+          id: data[i]['id'],
+          leaveType: data[i]['leave_type']['value'],
+          status: data[i]['status'],
+          fromDate: data[i]['from'],
+          toDate: data[i]['to'],
+          reason: data[i]['reason'],
+          appliedOn: data[i]['created_at']);
       leaveList.add(leaveData);
     }
     _leaveRequests = leaveList;
@@ -399,15 +412,16 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Null> fetchAttendanceRequestsForEmployeeForRefresh() async{
+  Future<Null> fetchAttendanceRequestsForEmployeeForRefresh() async {
     await fetchAttendanceRequests;
   }
 
-  Future<Null> fetchAttendanceRequests(Map<String,dynamic> filters) async{
+  Future<Null> fetchAttendanceRequests(Map<String, dynamic> filters) async {
     _isLoading = true;
     notifyListeners();
     final List<AttendanceRequests> requestList = [];
-    final List<dynamic> data = await ApiService.getAttendanceRequestListForEmployee(filters);
+    final List<dynamic> data =
+        await ApiService.getAttendanceRequestListForEmployee(filters);
     if (data == null) {
       _isLoading = false;
       notifyListeners();
@@ -418,7 +432,7 @@ mixin EmployeeOperationsScopedModel on Model{
         status: data[i]['status'],
         flag: data[i]['flag'],
         time: data[i]['time'],
-        date:data[i]['date'],
+        date: data[i]['date'],
       );
       requestList.add(requestData);
     }
@@ -428,7 +442,13 @@ mixin EmployeeOperationsScopedModel on Model{
     return;
   }
 
-  Future<Map<String,dynamic>> applyForLeave(String leaveType, String fromDate, String toDate, String reason, String leaveMode, String leaveModeShift) async{
+  Future<Map<String, dynamic>> applyForLeave(
+      String leaveType,
+      String fromDate,
+      String toDate,
+      String reason,
+      String leaveMode,
+      String leaveModeShift) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> response = await ApiService.leaveRequest(
@@ -444,43 +464,41 @@ mixin EmployeeOperationsScopedModel on Model{
     return response;
   }
 
-  Future<Map<String, dynamic>> applyForLeaveCancel(int id, String cancellationReason) async{
+  Future<Map<String, dynamic>> applyForLeaveCancel(
+      int id, String cancellationReason) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> successInformation =
-    await ApiService.applyLeaveCancel(id, cancellationReason);
-    if(successInformation['data'] != null){
+        await ApiService.applyLeaveCancel(id, cancellationReason);
+    if (successInformation['data'] != null) {
       _isLoading = false;
       notifyListeners();
       return successInformation['data'];
-    }
-    else{
+    } else {
       _isLoading = false;
       notifyListeners();
       return null;
     }
   }
 
-  Future<Map<String, dynamic>> updateEmployeeProfilePic(FormData data) async{
+  Future<Map<String, dynamic>> updateEmployeeProfilePic(FormData data) async {
     _isLoading = true;
     notifyListeners();
-    final Map<String, dynamic> successInformation = await ApiService.updateEmployeeInfo(data);
-    if(successInformation != null){
+    final Map<String, dynamic> successInformation =
+        await ApiService.updateEmployeeInfo(data);
+    if (successInformation != null) {
       _isLoading = false;
       notifyListeners();
       return successInformation;
-    }
-    else{
+    } else {
       _isLoading = false;
       notifyListeners();
       return null;
     }
   }
-
 
   bool get isActivityLoading {
     return _isLoading;
   }
 
 }
-
