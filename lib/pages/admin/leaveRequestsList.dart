@@ -62,11 +62,11 @@ class _LeaveRequestsListPageState extends BaseState<LeaveRequestsListPage> {
           filters: filter, currentPage: currentPage);
 
       if (tempList == null || tempList.isEmpty) {
-        if (model.allLeaveRequests.isNotEmpty) animateScrollBump();
+        if (widget.model.allLeaveRequests.isNotEmpty) animateScrollBump();
       } else {
         setState(() {
           isLoading = false;
-          model.allLeaveRequests.addAll(tempList);
+          widget.model.allLeaveRequests.addAll(tempList);
         });
       }
     }
@@ -81,7 +81,7 @@ class _LeaveRequestsListPageState extends BaseState<LeaveRequestsListPage> {
           if (index == data.length) {
             return _buildProgressIndicator();
           } else {
-            return LeaveRequestItemCard(data[index], filters, model);
+            return LeaveRequestItemCard(data[index], filters, widget.model);
           }
         },
         controller: _scrollController,

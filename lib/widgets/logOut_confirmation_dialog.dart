@@ -70,7 +70,8 @@ class _LogOutConfirmationDialogState
   }
 
   void _submitForm(Function logOut) {
-    logOut().then(() {
+    logOut().then((success) {
+      if(success)
       bg.BackgroundGeolocation.stop().then((bg.State state) {
         print('[stop] success: $state');
       });

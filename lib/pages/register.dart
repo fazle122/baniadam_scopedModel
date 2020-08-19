@@ -10,6 +10,8 @@ import 'package:random_string/random_string.dart';
 import 'dart:io';
 import 'dart:async';
 
+import 'package:toast/toast.dart';
+
 class RegisterPage extends StatefulWidget {
 
   final MainModel model;
@@ -25,6 +27,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends BaseState<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  TextEditingController idController;
   bool showPass = false;
   String _deviceId;
   String myInstanceId;
@@ -36,6 +39,7 @@ class _RegisterPageState extends BaseState<RegisterPage> {
   @override
   void initState() {
     super.initState();
+    idController = TextEditingController();
     initPlatformState();
   }
 
@@ -87,6 +91,8 @@ class _RegisterPageState extends BaseState<RegisterPage> {
             .size
             .width * 4 / 5,
         child: TextFormField(
+          textAlign: TextAlign.center,
+          controller: idController,
           decoration: InputDecoration(
             focusColor: Theme
                 .of(context)
@@ -95,7 +101,7 @@ class _RegisterPageState extends BaseState<RegisterPage> {
                 .of(context)
                 .primaryColorDark),
             hintText: 'company id',
-            prefixIcon: Icon(Icons.confirmation_number),
+//            prefixIcon: Icon(Icons.confirmation_number),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(32.0)),
           ),
@@ -118,7 +124,7 @@ class _RegisterPageState extends BaseState<RegisterPage> {
     _formKey.currentState.save();
     setCompany(_formData['companyId'],).then((bool success) {
       generateInstanceId();
-        Navigator.pushReplacementNamed(context, '/logIn');
+      Navigator.pushReplacementNamed(context, '/logIn');
     });
   }
 
@@ -255,9 +261,19 @@ class _RegisterPageState extends BaseState<RegisterPage> {
                         builder: (BuildContext context, Widget child,
                             MainModel model) {
                           return RaisedButton(
+                            color: idController.text.length <= 0
+                                ? Theme.of(context).disabledColor
+                                : Theme.of(context).buttonColor,
                             textColor: Colors.white,
                             child: Text('Register'),
-                            onPressed: () => _submitForm(model.setCompanyId),
+                            onPressed: () {
+                              if (idController.text.length <= 0) {
+                                Toast.show('Please provide company Id', context,
+                                    duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                              } else {
+                                _submitForm(model.setCompanyId);
+                              }
+                            }
                           );
                         },
                       ),),

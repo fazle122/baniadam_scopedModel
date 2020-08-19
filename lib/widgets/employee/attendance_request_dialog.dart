@@ -247,23 +247,50 @@ class _AttendanceRequestDialogWidgetState
     );
   }
 
+//  void _submitForm(Function attendanceRequestData) async{
+//    FormData data;
+//    if (selectedValue != null) {
+//      data = new FormData.from({
+//        'did': '10',
+//        'time': _time.hour.toString() +
+//            ":" +
+//            _time.minute.toString(),
+//        'request_reason':
+//        selectedValue.toString(),
+//      });
+//    } else {
+//      data = new FormData.from({
+//        'did': '10',
+//        'time': _time.hour.toString() +":" + _time.minute.toString(),
+//      });
+//    }
+//    attendanceRequestData(data,flagType).then((Map<String,dynamic> response){
+//      if (response['success']) {
+//        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+//        Navigator.of(context).pop();
+//      } else {
+//        Navigator.of(context).pop();
+//        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.CENTER);
+//      }
+//    });
+//
+//  }
+
   void _submitForm(Function attendanceRequestData) async{
-    FormData data;
+
+    Map<String,dynamic> mapData = Map();
+
     if (selectedValue != null) {
-      data = new FormData.from({
-        'did': '10',
-        'time': _time.hour.toString() +
-            ":" +
-            _time.minute.toString(),
-        'request_reason':
-        selectedValue.toString(),
-      });
+      mapData.putIfAbsent('did', () => '10');
+      mapData.putIfAbsent('time', () => _time.hour.toString() + ":" + _time.minute.toString());
+      mapData.putIfAbsent('request_reason', () => selectedValue.toString());
     } else {
-      data = new FormData.from({
-        'did': '10',
-        'time': _time.hour.toString() +":" + _time.minute.toString(),
-      });
+      mapData.putIfAbsent('did', () => '10');
+      mapData.putIfAbsent('time', () => _time.hour.toString() + ":" + _time.minute.toString());
     }
+
+    FormData data = FormData.fromMap(mapData);
+
     attendanceRequestData(data,flagType).then((Map<String,dynamic> response){
       if (response['success']) {
         Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);

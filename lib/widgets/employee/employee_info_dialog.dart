@@ -212,16 +212,19 @@ class _EmployeeInfoDialogState extends BaseState<EmployeeInfoDialog> {
         )),
       ),
       onTap: () async {
-        _submitData(model.updateEmployeeProfilePic);
+        _submitData(widget.model.updateEmployeeProfilePic);
       },
     );
   }
 
-  void _submitData(Function updateEmployeeProfilePic) {
+  void _submitData(Function updateEmployeeProfilePic) async{
     if (_imagePaths != null) {
-      FormData formData = new FormData.from({
-        "photoAttachment": new UploadFileInfo(new File(_imagePaths), _fileName),
+      FormData formData = new FormData.fromMap({
+        "photoAttachment": await MultipartFile.fromFile(galleryFile.path,filename: _fileName),
       });
+//      FormData formData = new FormData.from({
+//        "photoAttachment": new UploadFileInfo(new File(_imagePaths), _fileName),
+//      });
       updateEmployeeProfilePic(formData).then((Map<String, dynamic> response) {
         if(response = null){
           Toast.show('Something wrong, please try again.', context,
@@ -239,33 +242,57 @@ class _EmployeeInfoDialogState extends BaseState<EmployeeInfoDialog> {
         }
       });
     }
-
-//      if (successinformation == null) {
-//        Toast.show(
-//            "Please make sure you provided all data properly.Maximum image size for photo attachment is 100KB",
-//            context,
-//            duration: Toast.LENGTH_SHORT,
-//            gravity: Toast.CENTER);
-//      } else if (successinformation['success']) {
-//        Toast.show(successinformation['message'], context,
-//            duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-//        String photoUrl;
-//        final Map<String, dynamic> detailData =
-//            await ApiService.getEmployeeDetail();
-//        if (detailData != null) {
-//          setState(() {
-//            photoUrl = detailData['photoAttachment'];
-//          });
-//        }
-//        Navigator.of(context, rootNavigator: true).pop(photoUrl);
-////      Toast.show(successinformation['message'], context,
-////          duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-////      Navigator.of(context, rootNavigator: true).pop('success');
-//      } else {
-//        Toast.show(successinformation['message'], context,
-//            duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
-//      }
   }
+
+//  void _submitData(Function updateEmployeeProfilePic) {
+//    if (_imagePaths != null) {
+//      FormData formData = new FormData.from({
+//        "photoAttachment": new UploadFileInfo(new File(_imagePaths), _fileName),
+//      });
+//      updateEmployeeProfilePic(formData).then((Map<String, dynamic> response) {
+//        if(response = null){
+//          Toast.show('Something wrong, please try again.', context,
+//              duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+//          Navigator.of(context).pop();
+//        }
+//        if (response['success']) {
+//          Toast.show(response['message'], context,
+//              duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+//          Navigator.of(context).pop();
+//        } else {
+//          Toast.show('Something wrong, please try again.', context,
+//              duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+//          Navigator.of(context).pop();
+//        }
+//      });
+//    }
+//
+////      if (successinformation == null) {
+////        Toast.show(
+////            "Please make sure you provided all data properly.Maximum image size for photo attachment is 100KB",
+////            context,
+////            duration: Toast.LENGTH_SHORT,
+////            gravity: Toast.CENTER);
+////      } else if (successinformation['success']) {
+////        Toast.show(successinformation['message'], context,
+////            duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+////        String photoUrl;
+////        final Map<String, dynamic> detailData =
+////            await ApiService.getEmployeeDetail();
+////        if (detailData != null) {
+////          setState(() {
+////            photoUrl = detailData['photoAttachment'];
+////          });
+////        }
+////        Navigator.of(context, rootNavigator: true).pop(photoUrl);
+//////      Toast.show(successinformation['message'], context,
+//////          duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+//////      Navigator.of(context, rootNavigator: true).pop('success');
+////      } else {
+////        Toast.show(successinformation['message'], context,
+////            duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+////      }
+//  }
 
   Widget _buildCancelButton(BuildContext context) {
     return InkWell(

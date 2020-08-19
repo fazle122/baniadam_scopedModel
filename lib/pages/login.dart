@@ -196,8 +196,7 @@ class _LoginPageState extends BaseState<LoginPage> {
                                 )),
                               ),
                               onTap: () async {
-                                await SystemChannels.platform
-                                    .invokeMethod<void>('SystemNavigator.pop');
+                                await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                               },
                             ),
                           ],
@@ -276,8 +275,7 @@ class _LoginPageState extends BaseState<LoginPage> {
                           Center(
                               child: Text('Login',
                                   style: Theme.of(context)
-                                      .textTheme
-                                      .title)),
+                                      .textTheme.headline6)),
                           SizedBox(height: 50.0),
                           _buildEmailTextField(),
                           SizedBox(

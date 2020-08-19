@@ -10,6 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:date_format/date_format.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:intl/intl.dart';
+
 
 
 
@@ -54,7 +56,7 @@ class _TrackingMapState extends State<TrackingMap>{
     return ScopedModelDescendant(
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget content = Center(child: Text('No tracking data found!'));
-        if (model.allTrackingData.length > 0 && !model.isLoading) {
+        if (model.allTrackingData.length > 1 && !model.isLoading) {
           content = TrackingMapWidget(markerData);
         } else if (model.isLoading) {
           content = Center(child: CircularProgressIndicator());
@@ -72,7 +74,8 @@ class _TrackingMapState extends State<TrackingMap>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: Text(widget.name + ' on ' + widget.date.toString(),style: TextStyle(fontSize: 15.0),),
+//          title: Text(widget.name + ' on ' + widget.date.toString().split('.').first,style: TextStyle(fontSize: 15.0),),
+          title: Text(widget.name + ' on ' + DateFormat('EEE, d MMM').format(widget.date),style: TextStyle(fontSize: 15.0),),
     ),
       body: _buildMap(),
     );
@@ -426,7 +429,7 @@ class _TrackingMapWidgetState extends BaseState<TrackingMapWidget> {
               ),
 
               // Map markers loading indicator
-              if (_areMarkersLoading)
+              if(_areMarkersLoading)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Align(

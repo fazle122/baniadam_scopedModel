@@ -105,16 +105,17 @@ mixin AuthenticateUserScopedModel on Model {
         prefs.setInt('isTrackable',trackable);
       }
       AuthHelper.setLoginUser(loginResponse['access_token'], loginResponse['user_type'],userRoles,currentUserRole,loginResponse['is_tracking']);
-      createActivityLog(loginResponse['access_token'],'logIn');
+      await createActivityLog(loginResponse['access_token'],'logIn');
       return loginResponse;
     }
   }
 
-  Future<void> logOut() async{
+  Future<bool> logOut() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('user-token');
-    createActivityLog(token, 'logOut');
+    await createActivityLog(token, 'logOut');
     AuthHelper.logOutUser();
+    return true;
   }
 
   void createActivityLog(String token,String status) async{

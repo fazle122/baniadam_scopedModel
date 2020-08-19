@@ -337,13 +337,15 @@ mixin EmployeeOperationsScopedModel on Model {
         dates: listItem['data'][i]['dates'] != null
             ? listItem['data'][i]['dates']
             : null,
-//        offDayDate: test[i]['date'],
-        offDayType: leaveItem[listItem['data'][i]['dates']] != null
-            ? leaveItem[listItem['data'][i]['dates']]['type']
-            : null,
-        offDayStatus: leaveItem[listItem['data'][i]['dates']] != null
-            ? leaveItem[listItem['data'][i]['dates']]['status']
-            : null,
+        offDayType: leaveItem.containsKey(listItem['data'][i]['dates']) && leaveItem[listItem['data'][i]['dates']] != null ? leaveItem[listItem['data'][i]['dates']]['type']:null,
+        offDayStatus: leaveItem.containsKey(listItem['data'][i]['dates']) && leaveItem[listItem['data'][i]['dates']] != null ?leaveItem[listItem['data'][i]['dates']]['status']:null,
+//////        offDayDate: test[i]['date'],
+//        offDayType: leaveItem[listItem['data'][i]['dates']] != null
+//            ? leaveItem[listItem['data'][i]['dates']]['type']
+//            : null,
+//        offDayStatus: leaveItem[listItem['data'][i]['dates']] != null
+//            ? leaveItem[listItem['data'][i]['dates']]['status']
+//            : null,
       );
       attendanceList.add(attendanceData);
     }
@@ -497,7 +499,9 @@ mixin EmployeeOperationsScopedModel on Model {
     }
   }
 
-  bool get isActivityLoading {
+
+  bool get
+  isActivityLoading {
     return _isLoading;
   }
 

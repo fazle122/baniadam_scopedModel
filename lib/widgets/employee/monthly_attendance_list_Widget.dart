@@ -86,10 +86,16 @@ class MonthlyAttendanceItemCard extends StatelessWidget {
                           width: MediaQuery.of(context).size.width *
                               1.2 /
                               5,
-                          child: (attendanceData.offDayStatus != null &&
-                              attendanceData.offDayStatus != 'Pending' &&
-                              attendanceData.status != 'Present')
-                              ? Container(
+                          child: (
+//                              attendanceData.offDayStatus != null &&
+//                              attendanceData.offDayStatus != 'Pending' &&
+////                              attendanceData.status != 'Present'
+                              attendanceData.offDayType != null
+//                                  &&
+//                              attendanceData.status != 'Present'
+                          )
+                              ?
+                          Container(
                               margin: EdgeInsets.only(top: 15.0),
                               padding: EdgeInsets.only(
                                   left: 15.0,
@@ -109,9 +115,9 @@ class MonthlyAttendanceItemCard extends StatelessWidget {
                                 mainAxisAlignment:
                                 MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    attendanceData.offDayType.substring(0, 1).toUpperCase() +
-                                        attendanceData.offDayType.substring(1),
+                                  Text(attendanceData.offDayType,
+//                                    attendanceData.offDayType.substring(0, 1).toUpperCase() +
+//                                        attendanceData.offDayType.substring(1),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15.0,

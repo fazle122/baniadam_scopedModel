@@ -479,33 +479,33 @@ class _DisplayPictureScreenState extends BaseState<DisplayPictureScreen> {
 
   }
 
-  void _submitForm(Function createAttendance,Function updateSelfie) {
-    FormData data = FormData();
-    FormData selfieData = FormData();
-    selfieData.add('selfie', UploadFileInfo(file, 'test.png'));
+  void _submitForm(Function createAttendance,Function updateSelfie) async{
 
+    Map<String,dynamic> attendanceData = Map();
     if (selectedValue != null) {
-      data = new FormData.from({
-        'did': '10',
-        'lng': _currentLocation.longitude.toString(),
-        'lat': _currentLocation.latitude.toString(),
-        'request_reason': selectedValue.toString(),
-      });
+      attendanceData.putIfAbsent('did', () => '10');
+      attendanceData.putIfAbsent('lng', () => _currentLocation.longitude.toString());
+      attendanceData.putIfAbsent('lat', () => _currentLocation.latitude.toString());
+      attendanceData.putIfAbsent('request_reason', () => selectedValue.toString());
     } else {
-      data = new FormData.from({
-        'did': '10',
-        'lng': _currentLocation.longitude.toString(),
-        'lat': _currentLocation.latitude.toString(),
-      });
+      attendanceData.putIfAbsent('did', () => '10');
+      attendanceData.putIfAbsent('lng', () => _currentLocation.longitude.toString());
+      attendanceData.putIfAbsent('lat', () => _currentLocation.latitude.toString());
     }
+
+    FormData data = FormData.fromMap(attendanceData);
+    FormData selfieData = FormData.fromMap({"selfie": await MultipartFile.fromFile(file.path,filename:'test'),});
+
+
     createAttendance(data).then((Map<String,dynamic> response) {
       if (response['success']) {
-          Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-          updateSelfie(response['id'],selfieData);
-          Navigator.pushReplacementNamed(context, '/dashboard');
+        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+        updateSelfie(response['id'],selfieData);
+        Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
         Navigator.pushReplacementNamed(context, '/dashboard');
+
 //        showDialog(
 //            context: context,
 //            builder: (BuildContext context) {
@@ -523,4 +523,49 @@ class _DisplayPictureScreenState extends BaseState<DisplayPictureScreen> {
       }
     });
   }
+//
+//  void _submitForm(Function createAttendance,Function updateSelfie) {
+//    FormData data = FormData();
+//    FormData selfieData = FormData();
+//    selfieData.add('selfie', UploadFileInfo(file, 'test.png'));
+//
+//    if (selectedValue != null) {
+//      data = new FormData.from({
+//        'did': '10',
+//        'lng': _currentLocation.longitude.toString(),
+//        'lat': _currentLocation.latitude.toString(),
+//        'request_reason': selectedValue.toString(),
+//      });
+//    } else {
+//      data = new FormData.from({
+//        'did': '10',
+//        'lng': _currentLocation.longitude.toString(),
+//        'lat': _currentLocation.latitude.toString(),
+//      });
+//    }
+//    createAttendance(data).then((Map<String,dynamic> response) {
+//      if (response['success']) {
+//          Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+//          updateSelfie(response['id'],selfieData);
+//          Navigator.pushReplacementNamed(context, '/dashboard');
+//      } else {
+//        Toast.show(response['message'], context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
+//        Navigator.pushReplacementNamed(context, '/dashboard');
+////        showDialog(
+////            context: context,
+////            builder: (BuildContext context) {
+////              return AlertDialog(
+////                title: Text('Something went wrong'),
+////                content: Text('Please try again!'),
+////                actions: <Widget>[
+////                  FlatButton(
+////                    onPressed: () => Navigator.of(context).pop(),
+////                    child: Text('Okay'),
+////                  )
+////                ],
+////              );
+////            });
+//      }
+//    });
+//  }
 }

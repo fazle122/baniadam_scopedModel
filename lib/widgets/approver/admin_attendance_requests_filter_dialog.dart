@@ -24,7 +24,7 @@ class _AdminAttendanceRequestFilterDialogState extends BaseState<AdminAttendance
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
   List attendenceList;
-
+  Map<String,dynamic> _defaultFilters = Map();
   int selectedLeaveType;
   String selectedLeaveName;
   int selectedDesignation;
@@ -68,6 +68,7 @@ class _AdminAttendanceRequestFilterDialogState extends BaseState<AdminAttendance
 
   @override
   void initState() {
+    _defaultFilters['status'] = ['Pending'];
     _leaveTypes = new Map();
     _designations = new Map();
     _departments = new Map();
@@ -222,7 +223,7 @@ class _AdminAttendanceRequestFilterDialogState extends BaseState<AdminAttendance
                             )),
                       ),
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(_defaultFilters);
                       },
                     ),
                     InkWell(
